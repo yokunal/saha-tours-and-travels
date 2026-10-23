@@ -1997,8 +1997,8 @@ a.rev-badge:hover, a.rev-badge:focus-visible {
 .footer-column, .footer-nav { padding-top: 0; }
 .foot-links { list-style: none; padding: 0; margin: 0; }
 .foot-links li { margin-bottom: 9px; }
-.foot-logo { height: 52px; width: auto; margin-bottom: 15px; }
-.footer-brand .foot-logo { height: 72px; margin: 0; }
+.foot-logo { height: 52px; width: auto; object-fit: contain; margin-bottom: 15px; }
+.footer-brand .foot-logo { height: 72px; width: auto; object-fit: contain; margin: 0; }
 .footer-about { max-width: 66ch; margin: 0; color: #A7A7AA; font-size: .88rem; line-height: 1.72; }
 .foot-social { display: flex; gap: 8px; margin-top: 21px; }
 .foot-social a {
