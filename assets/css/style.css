@@ -1,0 +1,2307 @@
+/* ==========================================================================
+   ATTARI CAR SERVICE â€” Portal theme
+   A booking-engine interface: warm-grey app canvas, white cards, a hero
+   slider, a tabbed search widget, rating badges and offer coupons.
+
+   COLOUR = THE LOGO. Two colours only â€” the logo's yellow and the logo's
+   black. Green appears solely on WhatsApp actions, red solely on alerts.
+   ========================================================================== */
+
+:root {
+  /* Brand â€” sampled from assets/img/logo.png */
+  --brand: #FFC20E;        /* logo yellow â€” every primary action */
+  --brand-2: #F0AC00;      /* pressed / hover yellow */
+  --brand-3: #FFDA6B;      /* light yellow, for hairlines on dark */
+  --brand-soft: #FFF6DA;   /* yellow tint background */
+  --brand-ink: #7A5A00;    /* yellow-family text that still passes on white */
+
+  /* Interface â€” the logo's black, no blues anywhere */
+  --navy: #101010;         /* dark bars: topbar, hero, footer (name kept) */
+  --navy-2: #1D1D1D;
+  --ink: #0D0D0D;
+  --body-ink: #4B4B4B;
+  --muted: #7C7C7C;
+
+  --blue: #141414;         /* accent ink â€” was blue, now logo black */
+  --blue-soft: #FFF4D2;    /* accent tint â€” was pale blue, now yellow */
+  --green: #12A150;        /* WhatsApp + verified ticks only */
+  --green-soft: #E6F6EC;
+  --red: #DC3545;
+  --amber-soft: #FFF3C9;
+
+  --bg: #F5F4F0;           /* warm grey app canvas */
+  --surface: #FFFFFF;
+  --border: #E7E4DC;
+  --border-2: #D4D0C6;
+
+  /* aliases used by inline styles inside the pages */
+  --sun: #FFC20E;
+  --tar: #0D0D0D;
+
+  /* Two faces, deliberately unalike so a heading never reads as bold body text.
+     Archivo is an industrial grotesque â€” flat terminals, squared bowls, heavy
+     at 800/900 â€” the same bones as the black "ATTARI CAR" lettering in the
+     logo. Figtree is humanist and rounder: warm at paragraph size, and the
+     contrast against Archivo is what makes the hierarchy obvious. */
+  --font: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --head: "Archivo", "Segoe UI", system-ui, sans-serif;
+
+  --r-sm: 8px;
+  --r: 12px;
+  --r-lg: 18px;
+  --sh-1: 0 1px 2px rgba(0, 0, 0, .06), 0 1px 3px rgba(0, 0, 0, .05);
+  --sh-2: 0 4px 12px rgba(0, 0, 0, .09);
+  --sh-3: 0 12px 32px rgba(0, 0, 0, .14);
+  --pad-sec: clamp(48px, 5.5vw, 84px);
+  --header-h: 74px;
+  /* Measured height of the floating header, which .page-head has to clear.
+     It is not monotonic: below lg the topbar is hidden and the logo shrinks
+     to 36px, while between lg and xl the nav has collapsed into the burger
+     but the logo is still full size, which makes that range the tallest. */
+  --float-head: 66px;
+}
+@media (min-width: 992px)  { :root { --float-head: 134px; } }
+@media (min-width: 1200px) { :root { --float-head: 113px; } }
+
+/* ------------------------------------------------------------- base */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 16px); }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--body-ink);
+  font-size: .97rem;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Archivo sets tighter than the old face, so the negative tracking eases off â€”
+   past about -.02em its squared bowls start to collide at heading sizes. */
+h1, h2, h3, h4, h5, .display { font-family: var(--head); color: var(--ink); font-weight: 800; letter-spacing: -.015em; line-height: 1.14; }
+h1 { font-size: clamp(1.95rem, 3.6vw, 2.9rem); }
+h2 { font-size: clamp(1.5rem, 2.5vw, 2.1rem); }
+h3 { font-size: clamp(1.02rem, 1.35vw, 1.18rem); line-height: 1.3; }
+h4 { font-size: .99rem; }
+
+p { margin-bottom: .9rem; }
+a { color: var(--brand-ink); text-decoration: none; transition: color .16s ease; }
+a:hover { color: var(--ink); }
+img { max-width: 100%; height: auto; }
+::selection { background: var(--brand); color: var(--ink); }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
+.hero :focus-visible, .bg-ink :focus-visible, .asphalt :focus-visible,
+.bg-pine :focus-visible, .site-footer :focus-visible, .topbar :focus-visible { outline-color: var(--brand); }
+
+/* Parked off-screen until a keyboard user tabs to it. :focus-visible rather
+   than :focus so a click, a reload that restores focus, or a script that
+   moves focus never drops the black pill over the header. */
+.skip-link { position: absolute; left: -999px; top: 8px; z-index: 2000; background: var(--navy); color: #fff; padding: 11px 18px; border-radius: var(--r-sm); font-weight: 600; }
+.skip-link:focus-visible { left: 8px; color: #fff; }
+
+/* -------------------------------------------------------- structure */
+.sec { padding-block: var(--pad-sec); position: relative; }
+.sec-tight { padding-block: clamp(34px, 4vw, 56px); }
+.bg-mist, .bg-concrete { background: #fff9e3; }
+.bg-sun { background: var(--brand); }
+.bg-ink, .asphalt { background: var(--navy); color: #B4B4B4; }
+.bg-ink h1, .bg-ink h2, .bg-ink h3, .bg-ink h4, .asphalt h2, .asphalt h3, .asphalt h4 { color: #fff; }
+.bg-pine { background: var(--navy-2); color: #B4B4B4; }
+.bg-pine h2, .bg-pine h3 { color: #fff; }
+.hazard, .tread { display: none; }
+
+/* section eyebrow: soft category pill */
+.eyebrow, .plate {    display: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  /* same wide-tracked caps as .hero-kicker — the logo's "SERVICE" line */
+  font-family: var(--head);
+  font-weight: 700;
+  font-size: .72rem;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  /* background: var(--brand-soft); */
+  color: var(--ink);
+  /* border: 1px solid #F5E1A4; */
+  border-radius: 999px;
+  padding: 6px 0px;
+  margin-bottom: 13px;
+}
+.eyebrow::before, .plate::before {display: none; content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-2); }
+.bg-ink .eyebrow, .asphalt .eyebrow, .bg-pine .eyebrow, .eyebrow-light { background: rgba(255,194,14,.14); color: var(--brand); border-color: rgba(255,194,14,.34); }
+.bg-ink .eyebrow::before, .asphalt .eyebrow::before, .bg-pine .eyebrow::before, .eyebrow-light::before { background: var(--brand); }
+.bg-sun .eyebrow, .cta-band .eyebrow { background: rgba(13,13,13,.12); color: var(--ink); border-color: rgba(13,13,13,.2); }
+.bg-sun .eyebrow::before, .cta-band .eyebrow::before { background: var(--ink); }
+
+/* milestone stones belong to the other theme */
+.milestone { display: none; }
+.sec-head { display: block; }
+
+.lead-sm { font-size: 1rem; color: var(--muted); max-width: 64ch; }
+.bg-ink .lead-sm, .asphalt .lead-sm, .bg-pine .lead-sm { color: rgba(255,255,255,.68); }
+.mono { font-size: .8rem; color: var(--muted); }
+.hl-box { background: var(--brand); color: var(--ink); padding: 0 .16em; border-radius: 4px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.underline-sun { border-bottom: 4px solid var(--brand); }
+
+/* ------------------------------------------------------------ buttons */
+.btn {
+  /* buttons read as signage, not prose — Archivo keeps them crisp at 700 */
+  font-family: var(--head); font-weight: 700; font-size: .9rem; letter-spacing: -.002em;
+  border-radius: var(--r-sm); padding: 12px 22px; border: 1px solid transparent;
+  transition: background .16s ease, color .16s ease, box-shadow .16s ease, transform .12s ease;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn:active { transform: translateY(1px); }
+.btn-sun { background: var(--brand); color: var(--ink); box-shadow: var(--sh-1); }
+.btn-sun:hover { background: var(--brand-2); color: var(--ink); box-shadow: var(--sh-2); }
+.btn-ink { background: var(--navy); color: #fff; }
+.btn-ink:hover { background: var(--navy-2); color: #fff; }
+.btn-line { background: var(--surface); color: var(--ink); border-color: var(--border-2); }
+.btn-line:hover { background: #FAF9F4; border-color: var(--navy); color: var(--ink); }
+.btn-line-light { background: transparent; color: #fff; border-color: rgba(255,255,255,.38); }
+.btn-line-light:hover { background: #fff; color: var(--ink); border-color: #fff; }
+.btn-wa { background: var(--green); color: #fff; }
+.btn-wa:hover { background: #0E8944; color: #fff; }
+.btn-wa-line { background: var(--surface); color: var(--green); border-color: #BFE6CE; }
+.btn-wa-line:hover { background: var(--green); color: #fff; border-color: var(--green); }
+.btn-lg-x { padding: 15px 28px; font-size: .98rem; }
+
+/* Section-footer link â€” the "see everything" link that sits centred under a row
+   of cards. A pill with a brand-yellow arrow chip: lighter than a solid black
+   slab, and unlike the slab it actually carries the logo's yellow. */
+.btn-jump {
+  display: inline-flex; align-items: center; gap: 15px;
+  padding: 7px 7px 7px 26px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--border-2);
+  color: var(--ink); font-family: var(--head); font-weight: 700;
+  font-size: .95rem; letter-spacing: -.002em; box-shadow: var(--sh-1);
+  transition: background-color .22s ease, color .22s ease, border-color .22s ease, box-shadow .22s ease;
+}
+.btn-jump i {
+  width: 40px; height: 40px; flex: 0 0 auto; border-radius: 50%;
+  background: var(--brand); color: var(--ink);
+  display: grid; place-items: center; font-size: .78rem;
+  transition: transform .28s cubic-bezier(.2, .8, .3, 1);
+}
+.btn-jump:hover { background: var(--ink); color: #fff; border-color: var(--ink); box-shadow: var(--sh-2); }
+.btn-jump:hover i { transform: translateX(4px); }
+.btn-jump:active { transform: translateY(1px); }
+.btn-sm-x { padding: 8px 15px; font-size: .82rem; }
+/* two buttons sharing one row, exactly half and half. flex-basis 0 rather than
+   50% so the gap is taken out of the pair instead of overflowing the row. */
+.btn-pair { display: flex; gap: 10px; }
+.btn-pair .btn { flex: 1 1 0; min-width: 0; justify-content: center; }
+.btn-pair { display: flex; gap: 8px; }
+.btn-pair .btn { flex: 1 1 0; justify-content: center; min-width: 0; padding-inline: 10px; white-space: nowrap; gap: 6px; }
+
+/* ------------------------------------------------------------- header */
+.site-header { position: sticky; top: 0; z-index: 1030; background: var(--surface); border-bottom: 1px solid var(--border); transition: box-shadow .2s ease; }
+.site-header.is-stuck { box-shadow: var(--sh-2); }
+
+.topbar {
+  background: var(--navy); color: #ADADAD; font-size: .78rem;
+  padding: 7px 0; letter-spacing: .01em; border-bottom: 2px solid var(--brand);
+  /* collapses on scroll — see .is-stuck below. max-height rather than display
+     so the strip rolls away instead of vanishing between two frames; the value
+     only has to clear the real height (~35px), it is never rendered at 60. */
+  overflow: hidden; max-height: 60px;
+  transition: max-height .3s ease, opacity .22s ease, padding .3s ease, border-width .3s ease;
+}
+/* Past the scroll threshold only the nav bar stays: the contact strip has
+   already been read by then, and the shorter header gives the page back
+   forty-odd pixels of screen. */
+.site-header.is-stuck .topbar {
+  max-height: 0; opacity: 0; padding-block: 0; border-bottom-width: 0;
+}
+.topbar a { color: #fff; font-weight: 600; }
+.topbar a:hover { color: var(--brand); }
+.topbar i { color: var(--brand); }
+
+.navbar { padding: 0; min-height: var(--header-h); }
+/* Without this the brand is just another flex item: at xl the nav and the
+   buttons together need 1126px of the 1140px container, and the logo was
+   being shrunk to nothing to make room. It is the one thing in the bar that
+   must never give. */
+.navbar-brand { flex: 0 0 auto; }
+.navbar-brand img { height: 68px; max-width: 290px; width: auto; object-fit: contain; transition: height .2s ease; }
+.is-stuck .navbar-brand img { height: 50px; max-width: 240px; }
+/* the light mark only appears on a page that asks for it, below */
+.brand-logo--light { display: none; }
+
+/* ------------------------------------- transparent header over a dark banner
+   On .floating-header the header lifts out of the flow, so whatever sits at
+   the top of the page — the home page's video, an inner page's .page-head
+   photograph — runs all the way to the top of the viewport behind it. Until
+   the page is scrolled the bar is see-through and everything on it goes
+   light; past 20px main.js adds .is-stuck and the solid header comes back.
+
+   It needs a dark banner underneath: the white nav would vanish over a light
+   one, which is why 404 and thank-you are left on the ordinary header. */
+.floating-header .site-header {
+  position: fixed; inset-inline: 0; top: 0;
+  background: transparent; border-bottom-color: transparent;
+  transition: background .28s ease, border-color .28s ease, box-shadow .2s ease;
+}
+.floating-header .site-header.is-stuck { background: var(--surface); border-bottom-color: var(--border); }
+
+.floating-header .site-header:not(.is-stuck) .topbar {
+  /* the hero scrim already darkens this strip â€” the blur does most of the
+     legibility work here, so the tint stays light */
+  background: rgba(0,0,0,.2); color: rgba(255,255,255,.9);
+  border-bottom-color: rgba(255,255,255,.16);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.floating-header .site-header:not(.is-stuck) .brand-logo--light { display: block; }
+.floating-header .site-header:not(.is-stuck) .brand-logo--dark { display: none; }
+
+.floating-header .site-header:not(.is-stuck) .nav-link { color: #fff !important; }
+.floating-header .site-header:not(.is-stuck) .nav-link:hover { background: rgba(255,255,255,.15); }
+.floating-header .site-header:not(.is-stuck) .nav-link.active {
+  background: rgba(255,255,255,.15); box-shadow: inset 0 -2px 0 var(--brand);
+}
+.floating-header .site-header:not(.is-stuck) .btn-line {
+  background: transparent; color: #fff; border-color: rgba(255,255,255,.42);
+}
+.floating-header .site-header:not(.is-stuck) .btn-line:hover {
+  background: #fff; color: var(--ink); border-color: #fff;
+}
+.floating-header .site-header:not(.is-stuck) .navbar-toggler {
+  color: #fff; border-color: rgba(255,255,255,.42);
+}
+/* The desk number is the one action worth pulling out of the white outline
+   set, so over the hero it carries the logo yellow — text, icon and rule —
+   while Help stays quiet beside it. Hover fills the same yellow so the label
+   flips to ink and the contrast climbs rather than drops. */
+.floating-header .site-header:not(.is-stuck) .call-roll-btn {
+  background: transparent; color: var(--brand); border-color: var(--brand);
+}
+.floating-header .site-header:not(.is-stuck) .call-roll-btn:hover,
+.floating-header .site-header:not(.is-stuck) .call-roll-btn:focus-visible {
+  background: var(--brand); color: var(--ink); border-color: var(--brand);
+}
+
+/* ---- the header's rolling call button -------------------------------------
+   Both desk numbers occupy one slot. The two spans are stacked in a single
+   grid cell, so the button is sized by the wider of them once and never
+   reflows as they swap; the cell clips, and each number rolls up through it.
+   ------------------------------------------------------------------------ */
+.call-roll { display: grid; overflow: hidden; line-height: 1.35; }
+.call-num {
+  grid-area: 1 / 1; white-space: nowrap;
+  transform: translateY(110%); opacity: 0;
+  transition: transform .5s cubic-bezier(.2,.8,.3,1), opacity .34s ease;
+}
+.call-num.is-on { transform: none; opacity: 1; }
+.call-num.is-out { transform: translateY(-110%); opacity: 0; }
+/* Once a number has rolled out its .is-out is dropped and it must return to
+   the waiting position below the cell. Without this it would animate back
+   down across the button in full view. */
+.call-num:not(.is-on):not(.is-out) { transition: none; }
+
+/* Caps read wider and taller than lower case, so the size comes down and the
+   tracking opens up — otherwise seven items plus three buttons stop fitting
+   on one row at the xl breakpoint. */
+.nav-link {
+  font-family: var(--head); font-weight: 700; font-size: .79rem;
+  text-transform: uppercase; letter-spacing: .055em;
+  color: var(--ink) !important; padding: 9px 11px !important;
+  border-radius: var(--r-sm); white-space: nowrap;
+}
+.site-header .btn { white-space: nowrap; }
+.nav-link:hover { background: #F4F2EA; }
+.nav-link.active { color: var(--ink) !important; background: var(--brand-soft); box-shadow: inset 0 -2px 0 var(--brand); }
+.nav-link::after { display: none; }
+.nav-item.dropdown .nav-link.dropdown-toggle::after { display: inline-block; }
+
+.dropdown-menu { border: 1px solid var(--border); border-radius: var(--r); padding: 7px; box-shadow: var(--sh-3); }
+.dropdown-item { border-radius: var(--r-sm); font-weight: 600; font-size: .88rem; padding: 9px 12px; color: var(--ink); }
+.dropdown-item:hover, .dropdown-item:focus { background: var(--brand-soft); color: var(--ink); }
+
+.navbar-toggler { border: 1px solid var(--border-2); border-radius: var(--r-sm); padding: 6px 11px; }
+.navbar-toggler:focus { box-shadow: none; }
+.offcanvas { background: var(--surface); }
+.offcanvas-header { border-bottom: 1px solid var(--border); }
+/* the slide-out panel stacks one item per row, so the caps can go back up to
+   a comfortable tap size instead of squeezing onto a shared bar */
+.offcanvas .nav-link { font-size: .88rem; padding: 11px 12px !important; }
+
+/* The panel is marked up inside the header, so the over-the-hero overrides
+   above would reach in and paint its links and outline button white — on the
+   panel's own solid surface, i.e. invisible. It never sits over the video, so
+   it keeps the standing ink colours whether or not the header is stuck. */
+.floating-header .site-header:not(.is-stuck) .offcanvas .nav-link { color: var(--ink) !important; }
+.floating-header .site-header:not(.is-stuck) .offcanvas .nav-link:hover { background: #F4F2EA; }
+.floating-header .site-header:not(.is-stuck) .offcanvas .nav-link.active {
+  background: var(--brand-soft); box-shadow: inset 0 -2px 0 var(--brand);
+}
+.floating-header .site-header:not(.is-stuck) .offcanvas .btn-line {
+  background: var(--surface); color: var(--ink); border-color: var(--border-2);
+}
+.floating-header .site-header:not(.is-stuck) .offcanvas .btn-line:hover {
+  background: #FAF9F4; color: var(--ink); border-color: var(--navy);
+}
+
+/* --------------------------------------------------------------- HERO */
+.hero { background: #fff; color: #CFCFCF; padding: 0 0 clamp(34px, 4vw, 54px); position: relative; overflow: hidden; }
+.hero h1 { color: #fff; }
+.hero-sub { color: rgba(255,255,255,.74); font-size: 1.03rem; max-width: 58ch; }
+.hero-road, .hero-dash, .hero-glow { display: none; }
+.hero > .container { position: relative; z-index: 2; }
+.hero-stage { position: relative; }
+
+/* --------------------------------------------------- HERO VIDEO (background) */
+.hero-media {
+  position: relative; isolation: isolate; overflow: hidden;
+  /* taller than the old slider: the header now floats on top of it, so the
+     clip has to give back the height the bar covers. */
+  min-height: clamp(600px, 52vw, 760px);
+  background: #14140F;
+}
+
+/* The clip fills the stage the same way the old slide picture did â€” cover,
+   centred, never letterboxed. It is decoration, so it carries no controls. */
+.hero-video {
+  position: absolute; z-index: 0; inset: 0;
+  width: 100%; height: 100%; max-width: none;
+  object-fit: cover; object-position: center;
+  border: 0; border-radius: 0; pointer-events: none;
+}
+
+/* A light scrim only â€” enough to hold the copy together, not enough to grey
+   out the footage. The middle stays nearly clear and the weight sits in the
+   two bands that actually need it: under the header, and under the search
+   widget that rides up over the bottom edge. The copy's own text-shadow
+   carries the rest. */
+.hero-scrim {
+  position: absolute; z-index: 1; inset: 0; display: block; pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, rgba(0,0,0,.1) 0%, rgba(0,0,0,.22) 76%, rgba(0,0,0,.3) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.3) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 68%, rgba(0,0,0,.34) 100%);
+}
+
+/* One stable message sits centred over the video. The padding is the floating
+   header's own height, so "centred" means centred in the space left under it. */
+.hero-fixed-layer {
+  position: absolute; z-index: 4; inset: 0; pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+  padding-top: clamp(88px, 9vw, 124px);
+}
+.hero-fixed-layer > .container { width: 100%; }
+.hero-fixed-copy {
+  /* a query container so the headline can be sized against this block rather
+     than the viewport — at the md and lg breakpoints .container is far
+     narrower than 100vw, and a vw-based size overflows there */
+  container-type: inline-size;
+  width: min(980px, calc(100% - 32px)); margin-inline: auto; padding: 16px 0;
+  border: 0; border-radius: 0; background: transparent; color: #fff;
+  box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+  pointer-events: auto; text-align: center;
+}
+.hero-fixed-copy .hero-kicker { margin-inline: auto; }
+.hero-fixed-copy .hero-cta,
+.hero-fixed-copy .hero-points { justify-content: center; margin-inline: auto; }
+/* The scrim is deliberately thin, so each line of copy carries its own soft
+   halo â€” that keeps the words solid over a bright frame without darkening
+   the whole picture to get there. */
+.hero-fixed-copy .hslide-title {
+  color: #fff; max-width: 100%; margin-inline: auto;
+  /* balance evens the line lengths instead of filling each line and dumping
+     the remainder — it is what stops "car" being stranded at a line end */
+  text-wrap: balance;
+  text-shadow: 0 1px 3px rgba(0,0,0,.85), 0 4px 14px rgba(0,0,0,.6), 0 12px 34px rgba(0,0,0,.4);
+}
+.hero-fixed-copy .hslide-sub {
+  margin-inline: auto; color: rgba(255,255,255,.96);
+  text-shadow: 0 1px 3px rgba(0,0,0,.9), 0 4px 14px rgba(0,0,0,.62);
+}
+.hero-fixed-copy .hero-points li {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,.9), 0 4px 12px rgba(0,0,0,.6);
+}
+.hero-fixed-copy .hero-points i { color: var(--brand); text-shadow: 0 1px 2px rgba(0,0,0,.65); }
+
+/* ---- accreditation strip under the hero copy ------------------------------
+   One white chip per logo. Four of the five files are JPEGs that already
+   carry a white background, so the chip is what makes that background look
+   deliberate instead of like a stray rectangle over the video.
+   ------------------------------------------------------------------------ */
+.hero-assoc { margin-top: clamp(22px, 3vw, 34px); }
+.assoc-label {
+  display: block; margin-bottom: 12px;
+  font-family: var(--head); font-size: .62rem; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(255,255,255,.72); text-shadow: 0 1px 3px rgba(0,0,0,.8);
+}
+.assoc-list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+}
+.assoc-list li {
+  background: #fff; border-radius: 11px; padding: 8px 13px;
+  display: grid; place-items: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,.22);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.assoc-list li:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.28); }
+.assoc-list img { display: block; height: 34px; width: auto; object-fit: contain; }
+/* a white mark on transparent — flipped to dark so it reads on the chip */
+.assoc-inv { filter: invert(1); }
+
+/* wide-tracked caps, the way "S E R V I C E" sits under the logo mark */
+.hero-kicker {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgb(81, 81, 81, 0.2);
+    color: #ffc723;
+    border: 1px solid #ffc20e;
+  font-family: var(--head); font-weight: 700; font-size: .73rem;
+  letter-spacing: .13em; text-transform: uppercase;
+  padding: 7px 15px 7px 14px; border-radius: 999px; margin-bottom: 16px;
+}
+/* the one place the page goes as heavy as the wordmark itself */
+.hslide-title {
+  color: #fff; font-family: var(--head); font-weight: 900;
+  letter-spacing: -.018em; line-height: 1.06;
+  font-size: clamp(2.05rem, 4.6vw, 3.05rem);
+  max-width: 16ch; margin-bottom: 18px;
+}
+
+/* The quiet half. Set in the body face at well under half the size, it stops
+   competing with the line below it and lets that line do the shouting. */
+.ht-lead {
+  display: block; font-family: var(--font);
+  font-size: .4em; font-weight: 600; line-height: 1.3;
+  letter-spacing: .004em; color: rgba(255,255,255,.9);
+  margin-bottom: .42em;
+}
+.ht-main { display: block; text-transform: uppercase; }
+/* the keyword picked out in brand yellow — inline, so it adds no width and
+   the measured one-line fit below still holds */
+.ht-hl { color: var(--brand); font-weight: inherit; }
+
+/* ---- keeping the statement on one line ------------------------------------
+   Measured: the phrase occupies 17.3em in Archivo 900 at this tracking. So the
+   type is sized as a share of the copy block — 5.35cqi leaves room for 18.7em,
+   about 8% clear of the 17.3 it needs — and capped at 3.25rem so it stops
+   growing on wide screens. nowrap then guarantees the single line. The 8% is
+   what keeps the line off the edges at the md breakpoint, where .container is
+   at its narrowest relative to the type size.
+   Below sm this is off: one line at 360px would force the headline down to
+   about 20px and the lead-in above it to 8px, which is no longer a headline.
+   ------------------------------------------------------------------------ */
+@media (min-width: 576px) {
+  .hero-fixed-copy .hslide-title { font-size: min(3.25rem, 5.35cqi); }
+  .ht-main { white-space: nowrap; }
+}
+
+/* No panel behind the words — the accent is a brush stroke under them. It is
+   kept a block so the phrase always holds one line and the stroke can run its
+   full width; as an inline rule it would break in half at a line wrap.
+   The gradient fades at both ends so it reads as a stroke, not a border. */
+.hslide-title em {
+  display: block; position: relative; width: fit-content;
+  margin: 0 auto .12em; padding-bottom: .2em;
+  font-style: normal; color: #fff;
+}
+.hslide-title em::after {
+  content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: .04em;
+    height: 0.020em;
+    border-radius: 99px;
+    background: linear-gradient(90deg, rgba(255, 194, 14, 0) 0%, var(--brand) 50%, var(--brand) 50%, rgb(255 194 14 / 0%) 100%);
+}
+.hslide-sub { color: rgba(255,255,255,.76); font-size: clamp(.96rem, 1.15vw, 1.07rem); max-width: 50ch; margin-bottom: 24px; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.hero-points { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-wrap: wrap; gap: 9px 22px; max-width: 54ch; }
+.hero-points li { font-size: .84rem; font-weight: 600; color: rgba(255,255,255,.8); display: inline-flex; align-items: center; gap: 8px; }
+.hero-points i { color: var(--brand); font-size: .8rem; }
+
+/* content rises once, as the hero settles */
+.hero-fixed-copy .hero-kicker,
+.hero-fixed-copy .hslide-title,
+.hero-fixed-copy .hslide-sub,
+.hero-fixed-copy .hero-cta,
+.hero-fixed-copy .hero-points { animation: hslide-up .68s cubic-bezier(.2,.8,.3,1) both; }
+.hero-fixed-copy .hslide-title { animation-delay: .08s; }
+.hero-fixed-copy .hslide-sub { animation-delay: .16s; }
+.hero-fixed-copy .hero-cta { animation-delay: .24s; }
+.hero-fixed-copy .hero-points { animation-delay: .32s; }
+
+/* the search widget rides up over the bottom of the slider */
+.hero .searchbox { position: relative; margin-top: clamp(-58px, -4vw, -34px); z-index: 8; }
+
+/* ------------------------------------------- SEARCH WIDGET (signature) */
+.searchbox {
+  position: relative; background: var(--surface); border: 1px solid rgba(255,255,255,.72);
+  border-radius: 24px; box-shadow: 0 22px 55px rgba(0,0,0,.24);
+  overflow: hidden; margin-top: 26px;
+}
+/* The old yellow accent bar across the top is gone — the active tab's own
+   yellow marker sits a few pixels below it, and two stacked yellow rules read
+   as a stray element rather than a deliberate one. */
+
+/* Underline tabs on white. A pill or a coloured bar turns the strip into a
+   second panel sitting on top of the widget; an underline keeps it reading as
+   the top edge of one card, and leaves the yellow to mean "act" — the marker
+   under the open tab and the submit button, nothing else. */
+.searchbox-tabs {
+  display: flex; gap: 2px; overflow-x: auto;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 5px 14px 0; scrollbar-width: none;
+}
+.searchbox-tabs::-webkit-scrollbar { display: none; }
+.sbtab {
+  flex: 0 0 auto; border: 0; background: transparent; position: relative;
+  padding: 15px 18px 14px; border-radius: 10px 10px 0 0;
+  font-family: var(--head); font-weight: 700; font-size: .85rem;
+  color: #7C786E; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 9px;
+  transition: color .16s ease, background-color .16s ease;
+}
+/* the marker overlaps the strip's own border rather than sitting above it */
+.sbtab::after {
+  content: ""; position: absolute; left: 16px; right: 16px; bottom: -1px;
+  height: 3px; border-radius: 3px 3px 0 0; background: transparent;
+  transition: background-color .18s ease;
+}
+.sbtab i { font-size: 1rem; color: #BDB8AB; transition: color .16s ease; }
+.sbtab:hover { color: var(--ink); background: #FBF9F2; }
+.sbtab.active { color: var(--ink); }
+.sbtab.active::after { background: var(--brand); }
+.sbtab.active i { color: var(--brand-2); }
+
+/* ---- the field row: one surface split by hairlines, not a tray of boxes.
+   Each cell is its own hit target — clicking anywhere in it focuses the
+   field, and the cell lights from underneath while it holds focus. */
+.searchbox-body { padding: 0; }
+.sb-row { display: flex; align-items: stretch; flex-wrap: wrap; }
+.sb-cell {
+  flex: 1 1 0; min-width: 0; position: relative;
+  padding: 15px 20px 16px; border-right: 1px solid var(--border);
+  transition: background-color .16s ease;
+}
+.sb-cell--wide { flex-grow: 1.45; }
+.sb-cell::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+  height: 2px; background: transparent; transition: background-color .16s ease;
+}
+.sb-cell:hover { background: #FCFBF6; }
+.sb-cell:focus-within { background: #FFFCF1; }
+.sb-cell:focus-within::after { background: var(--brand); }
+
+.sb-cell > label {
+  display: block; font-family: var(--head);
+  font-size: .65rem; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: #918C80; margin: 0 0 6px;
+}
+.sb-input { display: flex; align-items: center; gap: 10px; }
+.sb-input > i { flex: 0 0 auto; font-size: .84rem; color: var(--brand-2); }
+
+/* background-color, not the background shorthand — the shorthand would also
+   wipe .form-select's caret image, which is a background-image */
+.sb-cell .form-control, .sb-cell .form-select {
+  border: 0; border-radius: 0; background-color: transparent; box-shadow: none;
+  padding: 0; min-height: 27px; width: 100%;
+  font-family: var(--head); font-weight: 700; font-size: .97rem;
+  color: var(--ink);
+}
+.sb-cell .form-control:focus, .sb-cell .form-select:focus { box-shadow: none; background-color: transparent; }
+.sb-cell .form-control::placeholder { color: #B6B1A4; font-weight: 600; }
+/* Bootstrap's validation icon would land on a field that has no box to hold
+   it — the cell's own underline says "fix this" instead. */
+.sb-cell .form-control:valid, .sb-cell .form-control:invalid { background-image: none; padding-right: 0; }
+.sb-cell .form-select { padding-right: 20px; background-position: right center; background-size: 11px 8px; }
+.searchbox.was-validated .sb-cell:has(:invalid) { background: #FDF5F4; }
+.searchbox.was-validated .sb-cell:has(:invalid)::after { background: var(--red); }
+
+/* rides the hairline between pick-up and drop */
+.swap-btn {
+  position: absolute; right: -16px; top: 50%; transform: translateY(-50%); z-index: 4;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border-2);
+  color: #7C786E; display: grid; place-items: center; font-size: .72rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.09); transition: all .2s ease;
+}
+.swap-btn:hover { background: var(--brand); border-color: var(--brand-2); color: var(--ink); }
+
+/* the submit sits in the row as its own cell, sized to its label */
+.sb-go { flex: 0 0 auto; display: flex; align-items: center; padding: 13px 16px; }
+.sb-go .btn {
+  min-height: 54px; padding: 12px 30px; border-radius: 12px;
+  font-size: .95rem; white-space: nowrap;
+  box-shadow: 0 8px 18px rgba(255,194,14,.28);text-transform: uppercase;
+}
+.sb-go .btn i { font-size: .9rem;display:none; }
+.searchbox-foot {    display: none;
+  /*display: flex;*/ flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+  padding: 11px 24px 13px; background: #F8F6F0; border-top: 1px solid #ECE7DC;
+}
+.sb-hint { font-size: .78rem; color: #6E6B64; display: inline-flex; align-items: center; gap: 7px; }
+.sb-hint i { color: var(--green); }
+
+/* --------------------------------------------------------- trust bar */
+.trustbar { background: var(--surface); border-bottom: 1px solid var(--border); }
+.trust-strip { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 20px; }
+.trust-chip { font-size: .78rem; font-weight: 600; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); color: #E2E2E2; border-radius: 999px; padding: 7px 13px; display: inline-flex; gap: 7px; align-items: center; }
+.trust-chip i { color: var(--brand); }
+.sec .trust-chip, .bg-mist .trust-chip { background: var(--surface); border-color: var(--border); color: var(--body-ink); }
+.sec .trust-chip i, .bg-mist .trust-chip i { color: var(--green); }
+
+.tstat { display: flex; align-items: center; gap: 12px; padding: 18px 4px; }
+.tstat .tico {width: 42px;height: 42px;border-radius: 50%;background: var(--blue-soft);color: #c69400;display: grid;place-items: center;font-size: 1.05rem;flex: 0 0 auto;}
+.tstat b {display: block;font-family: var(--head);font-size: .96rem;color: #565656;line-height: 1.25;}
+.tstat span { font-size: .8rem; color: var(--muted); }
+
+/* --------------------------------------------------- services showcase */
+.services-showcase {
+  position: relative; overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255,194,14,.055) 0 1px, transparent 1px) 0 0 / 24px 24px,
+    #F3F1EA;
+}
+.services-showcase::before {
+  content: ""; position: absolute; inset: 0 0 auto; height: 5px;
+  background: linear-gradient(90deg, var(--brand) 0 72%, var(--ink) 72% 100%); pointer-events: none;
+}
+.services-showcase .container { position: relative; z-index: 1; }
+.services-showcase .lead-sm { max-width: 56ch; }
+
+/* Three across, so the eight rows read as a grid of services rather than as a
+   sidebar with a list beside it. The yellow overview panel and its two-column
+   wrapper are gone; .service-list is the section's only child now.
+
+   Six tracks rather than three, each card spanning two. The widths come out
+   identical — a card swallows one internal gap, so 3 cards still measure
+   6 tracks + 5 gaps — but the half-track offset it buys is the only way to
+   centre a short final row in CSS grid. */
+.service-list { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.service-row { grid-column: span 2; }
+/* A card that opens a row (3n+1) and is also second-from-last means the last
+   row holds two of three. Pushing it one track in centres the pair. Written
+   positionally, so it keeps working if the number of services changes. */
+.service-row:nth-child(3n+1):nth-last-child(2) { grid-column: 2 / span 2; }
+.service-row {
+  position: relative; min-height: 132px; padding: 22px 54px 22px 20px;
+  border: 1px solid #DDD8CB; border-radius: 17px; background: rgba(255,255,255,.9);
+  display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 15px; align-items: center;
+  color: var(--ink); box-shadow: 0 7px 20px rgba(20,20,20,.04);
+  transition: background-color .22s ease, color .22s ease, border-color .22s ease, transform .22s ease, box-shadow .22s ease;
+}
+/* hover lifts into warm cream with a yellow edge â€” the old full black fill was
+   the other half of what made this section read so dark */
+.service-row:hover {
+  background: #FFFCF1; color: var(--ink); border-color: var(--brand);
+  transform: translateX(5px); box-shadow: 0 12px 26px rgba(213,152,0,.20);
+}
+.service-row-icon {
+  width: 48px; height: 48px; border-radius: 13px; background: #F2EEE4; color: var(--brand-ink);
+  display: grid; place-items: center; font-size: 1.05rem; transition: background-color .22s ease, color .22s ease;
+}
+.service-row:hover .service-row-icon { background: var(--ink); color: var(--brand); }
+/* ---- the services page's detail cards. Same visual family as .service-row
+   on the home page â€” cream card, tinted icon tile, brand hover â€” but each
+   one carries a feature list, a price and its own booking button. */
+.svc {
+  height: 100%; display: flex; flex-direction: column;
+  padding: 24px 22px 22px; border: 1px solid #DDD8CB; border-radius: 17px;
+  background: rgba(255,255,255,.9); box-shadow: 0 7px 20px rgba(20,20,20,.04);
+  transition: background-color .22s ease, border-color .22s ease, transform .22s ease, box-shadow .22s ease;
+}
+.svc:hover {
+  background: #FFFCF1; border-color: var(--brand);
+  transform: translateY(-4px); box-shadow: 0 12px 26px rgba(213,152,0,.20);
+}
+.svc-head { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 15px; align-items: start; margin-bottom: 16px; }
+.svc-ico {
+  width: 52px; height: 52px; border-radius: 14px; background: #F2EEE4; color: var(--brand-ink);
+  display: grid; place-items: center; font-size: 1.2rem;
+  transition: background-color .22s ease, color .22s ease;
+}
+.svc:hover .svc-ico { background: var(--ink); color: var(--brand); }
+.svc-head h3 { font-size: 1.1rem; margin-bottom: 6px; }
+.svc-head p { font-size: .86rem; color: var(--muted); margin: 0; }
+.svc-points { margin: 0 0 4px; }
+.svc-points li { font-size: .85rem; }
+.svc-foot {
+  margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+}
+.svc-price span {
+  display: block; font-size: .67rem; font-weight: 700; letter-spacing: .11em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 3px;
+}
+.svc-price b { font-family: var(--head); font-weight: 800; font-size: 1.05rem; color: var(--ink); }
+@media (prefers-reduced-motion: reduce) {
+  .svc, .svc-ico { transition: none; }
+  .svc:hover { transform: none; }
+}
+
+.service-row-copy { min-width: 0; }
+.service-row-copy strong { display: block; color: inherit; font-family: var(--head); font-size: .94rem; line-height: 1.3; margin-bottom: 5px; }
+.service-row-copy small { display: block; color: #78746C; font-size: .75rem; line-height: 1.45; }
+.service-row-arrow {
+  position: absolute; top: 50%; right: 16px; width: 27px; height: 27px; border-radius: 50%;
+  background: #F1EEE7; color: var(--ink); display: grid; place-items: center; font-size: .65rem;
+  transform: translateY(-50%); transition: background-color .22s ease, transform .22s ease;
+}
+.service-row:hover .service-row-arrow { background: var(--brand); transform: translateY(-50%) rotate(-35deg); }
+
+/* --------------------------------------------------------- offers */
+.coup {
+  position: relative; height: 100%; overflow: hidden; display: flex; flex-direction: column;
+  background: var(--surface); border: 1px solid #DDD8CC; border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(13,13,13,.08);
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+.coup:hover { transform: translateY(-5px); box-shadow: 0 18px 38px rgba(13,13,13,.14); border-color: #CFC7B5; }
+
+.coup-top {
+  position: absolute; z-index: 2; top: 13px; left: 13px; right: 13px;
+  padding: 0; color: var(--ink);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.coup-ico {
+  width: 40px; height: 40px; flex: 0 0 auto; border-radius: 8px;
+  background: rgba(255,255,255,.94); color: var(--ink); border: 1px solid rgba(255,255,255,.55);
+  display: grid; place-items: center; font-size: 1rem; box-shadow: 0 5px 16px rgba(0,0,0,.18);
+}
+.coup-val {
+  min-width: 76px; padding: 9px 11px; border-radius: 8px;
+  background: var(--brand); text-align: center; font-family: var(--head); font-weight: 800; line-height: 1;
+  box-shadow: 0 5px 16px rgba(0,0,0,.18);
+}
+.coup-val b { display: block; font-size: 1.12rem; letter-spacing: -.02em; }
+.coup-val small {
+  display: block; margin-top: 4px; font-size: .56rem; font-weight: 800;
+  letter-spacing: .14em; text-transform: uppercase; color: rgba(13,13,13,.62);
+}
+.coup::before, .coup::after {
+  content: ""; position: absolute; z-index: 4; top: 168px;
+  width: 26px; height: 26px; border: 0;
+  border-radius: 50%; background: var(--bg);
+  transform: translateY(-50%); pointer-events: none;
+}
+.coup::before { left: -14px; box-shadow: inset -1px 0 0 rgba(13,13,13,.16); }
+.coup::after { right: -14px; box-shadow: inset 1px 0 0 rgba(13,13,13,.16); }
+
+.coup-media {
+  position: relative; height: 168px; overflow: hidden;
+  background: #E9E6DE;
+}
+.coup-media::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,.18), transparent 48%, rgba(0,0,0,.2));
+}
+.coup-media img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+  transition: transform .4s cubic-bezier(.2,.8,.3,1);
+}
+.coup:hover .coup-media img { transform: scale(1.045); }
+.coup-media-vehicle { background: linear-gradient(145deg, #F5F3EC, #E6E1D5); }
+.coup-media-vehicle img { object-fit: contain; padding: 10px 18px; }
+.coup-media-vehicle::after { background: linear-gradient(180deg, rgba(13,13,13,.04), transparent 60%, rgba(13,13,13,.08)); }
+
+.coup-body { position: relative; flex: 1 1 auto; display: flex; flex-direction: column; padding: 24px 20px 20px; }
+.coup-body::before {
+  content: ""; position: absolute; top: 0; left: 19px; right: 19px;
+  border-top: 1px dashed #CBC4B6; pointer-events: none;
+}
+.coup-body h4 { margin-bottom: 7px; font-size: 1.02rem; }
+.coup-body p { font-size: .83rem; color: var(--muted); margin: 0 0 20px; line-height: 1.6; }
+.coupon {
+  width: 100%; align-self: stretch; margin-top: auto; padding-top: 13px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-family: ui-monospace, monospace; font-weight: 800; font-size: .78rem; letter-spacing: .1em;
+  color: var(--ink); border-top: 1px dashed #D8D1C1;
+}
+.coupon::before {
+  content: "Use code"; font-family: var(--font); font-weight: 700; font-size: .61rem;
+  letter-spacing: .11em; text-transform: uppercase; color: var(--muted);
+}
+
+/* ------------------------------------------------------------ cards */
+.card-x {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 22px; height: 100%; box-shadow: var(--sh-1);
+  transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+}
+.card-x::before { display: none; }
+.card-x:hover { box-shadow: var(--sh-3); transform: translateY(-3px); border-color: var(--border-2); }
+.card-x .ico { width: 46px; height: 46px; border-radius: var(--r-sm); background: var(--brand); border: 0; display: grid; place-items: center; font-size: 1.15rem; color: var(--ink); margin-bottom: 14px; }
+.card-x h3 { margin-bottom: 7px; }
+.card-x p { color: var(--muted); font-size: .89rem; margin-bottom: 12px; }
+/* Icon beside the copy instead of stacked above it. Opt-in, because the same
+   .card-x/.contact-info pair is also used for icon-less cards where a row
+   would lay the heading and its list out side by side. */
+.card-inline { display: flex; align-items: flex-start; gap: 14px; }
+.card-inline > .ico { flex: none; margin-bottom: 0; }
+/* min-width:0 so a long word cannot push the column wider than the card */
+.card-inline > .ci-body { flex: 1 1 auto; min-width: 0; }
+.card-inline > .ci-body > :last-child { margin-bottom: 0; }
+.bg-ink .card-x, .asphalt .card-x, .bg-pine .card-x { background: var(--navy-2); border-color: rgba(255,255,255,.09); box-shadow: none; }
+.bg-ink .card-x h3, .asphalt .card-x h3, .bg-pine .card-x h3 { color: #fff; }
+.bg-ink .card-x p, .asphalt .card-x p, .bg-pine .card-x p { color: rgba(255,255,255,.62); }
+.bg-ink .card-x .ico, .asphalt .card-x .ico, .bg-pine .card-x .ico { background: rgba(255,194,14,.16); color: var(--brand); }
+
+.card-list { list-style: none; padding: 0; margin: 0 0 14px; }
+.card-list li { font-size: .87rem; color: var(--body-ink); padding-left: 24px; position: relative; margin-bottom: 6px; }
+.card-list li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; left: 0; top: 0; color: var(--green); font-size: .74rem; }
+.bg-ink .card-list li, .asphalt .card-list li, .bg-pine .card-list li { color: rgba(255,255,255,.74); }
+
+.card-meta { font-size: .78rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 600; }
+.card-meta b { color: var(--ink); font-size: 1.05rem; font-family: var(--head); }
+.bg-ink .card-meta, .asphalt .card-meta, .bg-pine .card-meta { border-color: rgba(255,255,255,.1); }
+.bg-ink .card-meta b, .asphalt .card-meta b, .bg-pine .card-meta b { color: var(--brand); }
+
+/* --------------------------------------------- listing card (packages) */
+.slip { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; height: 100%; display: flex; flex-direction: column; box-shadow: var(--sh-1); transition: box-shadow .18s ease, transform .18s ease; }
+.slip:hover { box-shadow: var(--sh-3); transform: translateY(-3px); }
+.slip .ph { aspect-ratio: 16 / 7; }
+.slip-top { padding: 18px 18px 14px; border-bottom: 1px solid var(--border); position: relative; }
+.slip-top::before, .slip-top::after { display: none; }
+.slip-tag { display: inline-block; font-size: .69rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; background: var(--blue-soft); color: var(--blue); border-radius: 5px; padding: 4px 9px; margin-bottom: 9px; }
+.slip-tag.pine { background: var(--green-soft); color: var(--green); }
+.slip-tag.chili { background: #FDECEA; color: var(--red); }
+.slip-tag.sky { background: var(--blue-soft); color: var(--blue); }
+.slip-route { font-size: .81rem; color: var(--muted); margin-top: 6px; }
+.slip-body { padding: 16px 18px 18px; flex: 1 1 auto; display: flex; flex-direction: column; }
+.slip-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #FAF9F4; border: 1px solid var(--border); border-radius: var(--r-sm); padding: 11px 12px; margin-bottom: 14px; }
+.slip-grid div span { display: block; font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; font-weight: 700; }
+.slip-grid div b { font-size: .84rem; color: var(--ink); font-weight: 700; }
+.slip-price { display: flex; align-items: baseline; gap: 7px; margin-top: auto; padding-top: 10px; }
+.slip-price .amt { font-family: var(--head); font-size: 1.55rem; font-weight: 800; color: var(--ink); }
+.slip-price .per { font-size: .76rem; color: var(--muted); }
+
+/* rating pill, used on listing cards */
+.rating { display: inline-flex; align-items: center; gap: 5px; background: var(--green); color: #fff; border-radius: 5px; padding: 3px 7px; font-size: .76rem; font-weight: 700; }
+.rating i { font-size: .64rem; }
+.rating-count { font-size: .74rem; color: var(--muted); margin-left: 6px; }
+
+/* ------------------------------------------------------- fare table */
+.fare-wrap { border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; background: var(--surface); box-shadow: var(--sh-2); }
+.fare-table { width: 100%; margin: 0; border-collapse: collapse; }
+/* a brand-yellow header band: the old #FAF9F4 was a third near-white on top of
+   a white card on a beige section, so the table had no anchor and no colour */
+.fare-table thead th {
+  background: var(--brand); color: var(--ink);
+  font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+  padding: 13px 16px; font-weight: 800; white-space: nowrap;
+  border-bottom: 1px solid var(--brand-2);
+}
+.fare-table tbody td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: .9rem; vertical-align: middle; }
+.fare-table tbody td:first-child { box-shadow: inset 3px 0 0 transparent; transition: box-shadow .18s ease; }
+.fare-table tbody tr:last-child td { border-bottom: 0; }
+.fare-table tbody tr:nth-child(even) { background: #FCFBF4; }
+.fare-table tbody tr:hover { background: var(--brand-soft); }
+.fare-table tbody tr:hover td:first-child { box-shadow: inset 3px 0 0 var(--brand-2); }
+.fare-route { font-family: var(--head); font-weight: 700; font-size: .93rem; color: var(--ink); }
+.fare-km { font-size: .81rem; color: var(--muted); }
+.fare-amt { font-family: var(--head); font-weight: 800; font-size: 1rem; color: var(--ink); white-space: nowrap; }
+
+/* -------------------------------------------------- fleet result card */
+.fleet-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; height: 100%; box-shadow: var(--sh-1); transition: box-shadow .18s ease, transform .18s ease; }
+.fleet-card:hover { box-shadow: var(--sh-3); transform: translateY(-3px); }
+.fleet-visual { background: var(--navy); border-bottom: 3px solid var(--brand); padding: 30px 18px; text-align: center; position: relative; overflow: hidden; }
+.fleet-visual::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 90% at 20% 0%, rgba(255,194,14,.16), transparent 62%); }
+.fleet-visual .car-ico { font-size: 2.9rem; color: var(--brand); transition: transform .3s ease; display: inline-block; position: relative; }
+.fleet-card:hover .fleet-visual .car-ico { transform: translateX(6px); }
+.fleet-visual::after { display: none; }
+.fleet-seats { position: absolute; top: 11px; right: 11px; z-index: 2; font-size: .7rem; font-weight: 700; background: var(--brand); color: var(--ink); border: 1px solid var(--brand); padding: 4px 9px; border-radius: 999px; }
+.fleet-body { padding: 17px; }
+.fleet-specs { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 14px; }
+.fleet-specs span { font-size: .74rem; font-weight: 600; background: #F6F4EE; border: 1px solid var(--border); border-radius: 999px; padding: 4px 10px; color: var(--body-ink); }
+
+/* -------------------------------------------------- destination tiles */
+.dest {
+  position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r);
+  padding: 22px; min-height: 250px; display: flex; flex-direction: column; justify-content: flex-end;
+  color: #fff; box-shadow: var(--sh-1); transition: box-shadow .18s ease, transform .18s ease;
+  background: repeating-linear-gradient(135deg, rgba(255,194,14,.05) 0 2px, transparent 2px 11px), #16161A;
+}
+/* photograph layer â€” a real <img>, same reason as .ph-img */
+.dest-img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  opacity: .55; transition: transform .5s cubic-bezier(.2,.8,.3,1);
+}
+.dest::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(72% 96% at 18% 6%, rgba(255,194,14,.20), transparent 62%),
+    linear-gradient(180deg, rgba(0,0,0,.04) 0%, rgba(0,0,0,.62) 100%);
+}
+.dest:hover .dest-img { transform: scale(1.06); }
+.dest:hover { box-shadow: var(--sh-3); transform: translateY(-3px); color: #fff; }
+.dest h3 { color: #fff; font-size: 1.35rem; margin-bottom: 6px; position: relative; z-index: 2; }
+.dest p { font-size: .86rem; color: rgba(255,255,255,.82); margin-bottom: 13px; position: relative; z-index: 2; }
+.dest .dest-num { position: absolute; z-index: 3; top: 13px; right: 14px; font-size: .72rem; font-weight: 600; background: rgba(255,255,255,.16); padding: 4px 9px; border-radius: 999px; }
+.dest .dest-more { font-size: .84rem; font-weight: 700; color: var(--brand); display: inline-flex; gap: 8px; align-items: center; position: relative; z-index: 2; }
+.dest:hover .dest-more i { transform: translateX(4px); transition: transform .2s ease; }
+/* The old per-region colours (green Sikkim, rust Bhutan, blue North East) are
+   gone. Every panel is the brand black now and is told apart by its
+   photograph, exactly like the .ph cards. The .dest-* classes are kept in the
+   markup only as hooks in case a region ever needs its own treatment. */
+
+/* ==========================================================================
+   IMAGE-TOP CARD SYSTEM
+   Destinations, vehicles and packages all share one photo block. Each card
+   sets --img; until that file exists the block falls back to the black and
+   yellow treatment with an icon watermark, so nothing ever looks broken.
+   ========================================================================== */
+.ph {
+  position: relative; overflow: hidden; aspect-ratio: 16 / 10;
+  /* the diagonal weave only shows while there is no photograph on top of it */
+  background:
+    repeating-linear-gradient(135deg, rgba(255,194,14,.05) 0 2px, transparent 2px 11px),
+    #16161A;
+}
+/* The picture is a real <img>, not a CSS background: a relative url() inside a
+   custom property resolves against this stylesheet's folder (assets/css/)
+   rather than the page, which silently 404s. An <img> whose file is missing
+   collapses to nothing and leaves the weave and the icon showing. */
+.ph-img {
+  position: absolute; inset: 0; z-index: 1;
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .5s cubic-bezier(.2,.8,.3,1);
+}
+.ph::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  /* background:
+    radial-gradient(72% 96% at 18% 6%, rgba(255,194,14,.20), transparent 62%),
+    linear-gradient(180deg, rgba(0,0,0,.12) 0%, rgba(0,0,0,.55) 100%); */
+}
+.ph-ico { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; font-size: 3.4rem; color: rgba(255,194,14,.17); }
+.ph-badge {
+  position: absolute; z-index: 3; top: 10px;
+  font-size: .69rem; font-weight: 800; letter-spacing: .03em;
+  background: var(--brand); color: var(--ink); padding: 5px 11px; border-radius: 999px;
+}
+.ph-badge.tl { left: 10px; }
+.ph-badge.tr { right: 10px; }
+.ph-badge.dark { background: rgba(10,10,10,.78); color: #fff; backdrop-filter: blur(3px); }
+.vcard:hover .ph-img, .pcard:hover .ph-img, .slip:hover .ph-img { transform: scale(1.07); }
+
+.vcard, .pcard {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
+  overflow: hidden; height: 100%; display: flex; flex-direction: column;
+  box-shadow: var(--sh-1); transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+}
+.vcard:hover, .pcard:hover { box-shadow: var(--sh-3); transform: translateY(-3px); border-color: var(--border-2); }
+
+/* ==========================================================================
+   DESTINATION MOSAIC (home)
+   A dark band of full-bleed photo tiles in an uneven grid â€” Sikkim runs 2x2,
+   Bhutan runs a wide 2x1, the rest are single cells. The picture carries the
+   card; the copy sits on a scrim at the floor of each tile.
+   ========================================================================== */
+.dest-sec { position: relative; overflow: hidden; background: var(--surface); }
+.dest-sec::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(64% 58% at 92% -8%, rgba(255,194,14,.16), transparent 62%);
+}
+.dest-sec > .container { position: relative; z-index: 1; }
+
+.dmosaic { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 188px; gap: 13px; }
+.dtile {
+  position: relative; overflow: hidden; border-radius: 16px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  background: #131313; border: 1px solid var(--border); color: #fff;
+  box-shadow: var(--sh-1);
+  transition: border-color .28s ease, transform .28s ease, box-shadow .28s ease;
+}
+.dtile:hover { color: #fff; border-color: var(--brand-2); transform: translateY(-3px); box-shadow: var(--sh-3); }
+.dtile-lg { grid-column: span 2; grid-row: span 2; }
+.dtile-wide { grid-column: span 2; }
+
+/* The picture used to sit at .84 opacity over a near-black card, which mixed
+   16% black into every pixel before the gradient on top added its own. Full
+   opacity plus a lighter gradient means only the bottom strip — the part the
+   caption actually sits on — is darkened at all. */
+.dtile-img {
+  position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover;
+  opacity: 1; transition: transform .6s cubic-bezier(.2, .8, .3, 1);
+}
+.dtile::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(180deg,
+    rgba(0,0,0,0) 0%, rgba(0,0,0,.04) 44%, rgba(0,0,0,.3) 70%, rgba(0,0,0,.72) 100%);
+}
+.dtile:hover .dtile-img { transform: scale(1.07); }
+
+.dtile-chip {
+  position: absolute; z-index: 3; top: 11px; left: 11px;
+  font-size: .67rem; font-weight: 800; letter-spacing: .03em;
+  background: rgba(10,10,10,.6); color: #fff; border: 1px solid rgba(255,255,255,.2);
+  backdrop-filter: blur(4px); padding: 5px 10px; border-radius: 999px;
+}
+.dtile-lg .dtile-chip, .dtile-wide .dtile-chip { background: var(--brand); color: var(--ink); border-color: transparent; }
+.dtile-go {
+  position: absolute; z-index: 3; top: 10px; right: 10px;
+  width: 32px; height: 32px; border-radius: 50%; background: var(--brand); color: var(--ink);
+  display: grid; place-items: center; font-size: .7rem;
+  opacity: 0; transform: translateY(-6px) scale(.85);
+  transition: opacity .26s ease, transform .26s cubic-bezier(.2, .8, .3, 1);
+}
+.dtile:hover .dtile-go { opacity: 1; transform: none; }
+
+.dtile-body { position: relative; z-index: 3; padding: 16px 15px 15px; }
+.dtile-body::before {
+  content: ""; display: block; width: 26px; height: 3px; border-radius: 2px;
+  background: var(--brand); margin-bottom: 11px; transition: width .3s ease;
+}
+.dtile:hover .dtile-body::before { width: 54px; }
+.dtile-kicker {
+  display: block; font-size: .66rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--brand); margin-bottom: 5px;
+}
+/* the scrim is thinner now, so the caption carries its own halo the way the
+   hero copy does — that is what lets the gradient stay light */
+.dtile-kicker, .dtile h3, .dtile-tag { text-shadow: 0 1px 3px rgba(0,0,0,.75), 0 3px 12px rgba(0,0,0,.5); }
+.dtile h3 { color: #fff; font-size: 1.06rem; margin: 0; }
+.dtile-lg h3 { font-size: clamp(1.5rem, 2.3vw, 2rem); }
+.dtile-wide h3 { font-size: 1.3rem; }
+.dtile-tag { display: block; font-size: .765rem; line-height: 1.45; color: rgba(255,255,255,.74); margin-top: 4px; }
+.dtile-lg .dtile-tag, .dtile-wide .dtile-tag { font-size: .84rem; margin-top: 6px; }
+.dtile-lg .dtile-body, .dtile-wide .dtile-body { padding: 22px 22px 20px; }
+
+/* ---- vehicle card */
+.vcard .ph { aspect-ratio: 16 / 11; }
+
+/* The fleet photos are transparent cut-outs, not scenery, so they get their own
+   block: a light studio ground with the car sitting on it at object-fit
+   contain. .ph would crop them and drop a dark scrim over a white car. */
+.vshot {
+  position: relative; overflow: hidden; aspect-ratio: 16 / 11;
+  background:
+    radial-gradient(70% 58% at 50% 118%, rgba(13,13,13,.10), transparent 62%),
+    linear-gradient(180deg, #FFFDF7 0%, #F4F1E7 100%);
+  border-bottom: 1px solid var(--border);
+}
+.vshot img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; padding: 12px 14px 16px;
+  transition: transform .45s cubic-bezier(.2, .8, .3, 1);
+}
+.vcard:hover .vshot img { transform: scale(1.06); }
+/* .vshot img.vehicle-scorpio-classic { padding: 0; transform: scale(1.95); }
+.vcard:hover .vshot img.vehicle-scorpio-classic { transform: scale(2.04); }*/
+
+
+/* ==========================================================================
+   CAROUSEL SHELL (Owl) â€” shared by the fleet and the tour packages
+   Any .owl-shell gets equal-height cards and the same pair of round arrows.
+   ========================================================================== */
+.owl-wrap { position: relative; }
+/* flexing the stage is what makes every card the same height, but the items must
+   keep the exact pixel width Owl wrote inline or its transform no longer lines
+   up with the track and the first card sits half outside the container */
+.owl-shell .owl-stage { display: flex; align-items: stretch; }
+.owl-shell .owl-item { display: flex; flex: 0 0 auto; }
+.owl-shell .owl-item > * { width: 100%; }
+.owl-shell .owl-nav { margin: 0; }
+.owl-shell .owl-nav button.owl-prev,
+.owl-shell .owl-nav button.owl-next {
+  /* a fixed offset, not a percentage: it keeps both arrows on the picture even
+     though a package card is far taller than a vehicle card */
+  position: absolute; top: 110px; transform: translateY(-50%); z-index: 6;
+  width: 44px; height: 44px; margin: 0; border-radius: 50%;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--border-2); box-shadow: var(--sh-2);
+  display: grid; place-items: center; font-size: .82rem;
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease;
+}
+.owl-shell .owl-nav button.owl-prev:hover,
+.owl-shell .owl-nav button.owl-next:hover {
+  background: var(--brand); color: var(--ink); border-color: var(--brand-2);
+}
+/* cards with no picture at the top (reviews) centre their arrows instead */
+.owl-shell--mid .owl-nav button.owl-prev,
+.owl-shell--mid .owl-nav button.owl-next { top: 50%; }
+.owl-shell .owl-nav button.owl-prev { left: -21px; }
+.owl-shell .owl-nav button.owl-next { right: -21px; }
+.owl-shell .owl-nav button.disabled { opacity: .38; cursor: default; }
+.owl-shell .owl-nav button span { display: none; }
+.vcard-body { padding: 14px 14px 15px; display: flex; flex-direction: column; flex: 1 1 auto; }
+.vcard h3 { font-size: 1rem; margin-bottom: 10px; }
+.vspec { list-style: none; padding: 0; margin: 0 0 14px; }
+.vspec li { font-size: .8rem; color: var(--body-ink); padding-left: 19px; position: relative; margin-bottom: 5px; line-height: 1.45; }
+.vspec li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; left: 0; top: 1px; color: var(--brand-2); font-size: .66rem; }
+.vcard .vcard-foot { margin-top: auto; display: flex; gap: 7px; }
+/* flex-basis 0 rather than 50% so the gap comes out of the pair, not off the end
+   â€” the two buttons stay exactly half and half whatever the labels are */
+.vcard .vcard-foot .btn {
+  flex: 1 1 0; min-width: 0; justify-content: center;
+  padding-inline: 6px; white-space: nowrap;
+}
+
+/* ---- tour packages background: Darjeeling Himalayan landscape */
+#packages {
+  position: relative; isolation: isolate; overflow: hidden;
+  background: #FFFFFF;
+}
+#packages::before {
+  content: ""; position: absolute; z-index: -2; inset: 0; pointer-events: none;
+  background: url("../img/darjeeling-himalaya-panorama.png") center 56% / cover no-repeat;
+  opacity: .52; filter: saturate(.8) contrast(.94);
+}
+#packages::after {
+  content: ""; position: absolute; z-index: -1; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,.92) 16%, rgba(255,255,255,.28) 42%, rgba(255,255,255,.16) 100%);
+}
+#packages > .container { position: relative; z-index: 1; }
+
+@media (max-width: 767.98px) {
+  #packages::before { background-position: 50% 56%; opacity: .44; }
+}
+
+/* ---- package card */
+.pcard-body { padding: 15px 16px 16px; display: flex; flex-direction: column; flex: 1 1 auto; }
+.pcard h3 { font-size: 1.02rem; margin-bottom: 10px; }
+.ptrail { list-style: none; padding: 0; margin: 0 0 12px; font-size: .82rem; color: var(--body-ink); }
+.ptrail li { padding-left: 17px; position: relative; margin-bottom: 4px; }
+.ptrail li::before { content: ""; position: absolute; left: 3px; top: 9px; width: 5px; height: 5px; border-radius: 50%; background: var(--brand-2); }
+.pfrom { font-size: .78rem; color: var(--muted); margin: 0 0 11px; }
+.pfrom b { font-family: var(--head); font-size: 1.12rem; color: var(--ink); }
+.pincl { border-top: 1px dashed var(--border-2); margin-top: auto; padding-top: 11px; margin-bottom: 12px; font-size: .77rem; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; line-height: 1.5; }
+.pincl i { color: var(--green); margin-top: 3px; flex: 0 0 auto; }
+.pcard .btn { width: 100%; justify-content: center; }
+
+/* ---- why-choose-us: icon on top, centred, on the dark band */
+/* ---- why-choose-us
+   Was a Darjeeling photograph under a 90%-black scrim, and it sat a few
+   hundred pixels above the equally dark milestones band — two black slabs
+   almost back to back. It runs on the page's own warm canvas now, so the
+   milestone band below it reads as a deliberate change of gear rather than
+   more of the same. The brand comes from a soft glow off the top edge and
+   the yellow icon tiles, not from a photograph fighting a scrim. */
+.why-sec {
+  position: relative; overflow: hidden;
+  background:
+    radial-gradient(78% 54% at 50% -6%, rgba(255,194,14,.2), transparent 70%),
+    linear-gradient(180deg, #FBF9F3 0%, var(--bg) 62%);
+}
+/* a hairline of brand yellow across the top edge, so the band is still
+   bounded without needing a block of colour to do it */
+.why-sec::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--brand) 22%, var(--brand) 78%, transparent);
+}
+.why-sec > .container { position: relative; z-index: 2; }
+
+.wcard {
+  text-align: center; padding: 32px 20px 28px; height: 100%;
+  border-radius: var(--r-lg); background: var(--surface);
+  border: 1px solid var(--border); box-shadow: var(--sh-1);
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+.wcard:hover { transform: translateY(-4px); box-shadow: var(--sh-3); border-color: var(--brand-2); }
+/* a rounded square rather than a circle — it echoes the logo's blocky mark and
+   keeps these tiles distinct from the round icons used elsewhere on the page */
+.wcard .wico {
+  width: 60px; height: 60px; margin: 0 auto 17px; border-radius: 19px;
+  background: var(--brand); color: var(--ink);
+  display: grid; place-items: center; font-size: 1.32rem;
+  box-shadow: 0 0 0 8px var(--brand-soft);
+  transition: box-shadow .22s ease, transform .22s ease;
+}
+.wcard:hover .wico { box-shadow: 0 0 0 12px var(--brand-soft); transform: translateY(-2px); }
+.wcard h3 { color: var(--ink); margin-bottom: 9px; }
+.wcard p { font-size: .86rem; color: var(--muted); margin: 0; line-height: 1.65; }
+
+/* ---- milestones band
+   Four darkening layers used to stack here — this gradient, the ::before, the
+   stats panel and the section's own dark class — and between them the fleet
+   photograph was all but gone. Each one is pulled back so the picture is the
+   band, and the tint only does what it has to: anchor the edges and hold the
+   contrast under the numbers. */
+.milestone-sec {
+  position: relative; isolation: isolate; overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(5,8,10,.42), rgba(5,8,10,.13) 50%, rgba(5,8,10,.32)),
+    url("../img/milestone-taxi-bg.jpg") center 66% / cover no-repeat;
+}
+.milestone-sec::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(60% 140% at 50% 100%, rgba(255,194,14,.15), transparent 65%),
+    linear-gradient(180deg, rgba(0,0,0,.02), rgba(0,0,0,.16));
+}
+.milestone-sec::after {
+  content: ""; position: absolute; left: 50%; bottom: 0; width: min(460px, 50vw); height: 4px;
+  border-radius: 4px 4px 0 0; background: var(--brand); transform: translateX(-50%);
+}
+.milestone-sec > .container { position: relative; z-index: 1; }
+/* the panel leans on blur rather than opacity now — it still separates the
+   figures from the road behind them without going back to a black slab */
+.milestone-sec .row {
+  overflow: hidden; border: 1px solid rgba(255,255,255,.2); border-radius: 18px;
+  background: rgba(7,9,10,.34); box-shadow: 0 18px 45px rgba(0,0,0,.24);
+  backdrop-filter: blur(13px); -webkit-backdrop-filter: blur(13px);
+}
+.mstat { text-align: center; padding: 12px 8px; }
+.milestone-sec .mstat { padding: 25px 10px; }
+.mstat .mnum { font-family: var(--head); font-weight: 800; line-height: 1; font-size: clamp(1.85rem, 3.5vw, 2.85rem); color: var(--brand); }
+/* with a lighter tint behind them the figures carry their own halo instead */
+.milestone-sec .mnum { text-shadow: 0 1px 3px rgba(0,0,0,.8), 0 4px 18px rgba(0,0,0,.55); }
+.mstat .mlbl { font-size: .82rem; color: rgba(255,255,255,.66); margin-top: 8px; font-weight: 600; }
+.milestone-sec .mlbl { color: rgba(255,255,255,.9); text-shadow: 0 1px 3px rgba(0,0,0,.75); }
+@media (min-width: 768px) {
+  .mcol { border-right: 1px solid rgba(255,255,255,.12); }
+  .mcol:last-child { border-right: 0; }
+}
+@media (max-width: 767.98px) {
+  .milestone-sec { background-position: 62% center; }
+  .milestone-sec .mcol { border-right: 1px solid rgba(255,255,255,.12); }
+  .milestone-sec .mcol:nth-child(2n) { border-right: 0; }
+  .milestone-sec .mcol:nth-child(-n+2) { border-bottom: 1px solid rgba(255,255,255,.12); }
+}
+
+/* ---- intro block point list */
+.intro-points { list-style: none; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px 20px; }
+.intro-points li { font-size: .88rem; font-weight: 600; color: var(--ink); display: flex; gap: 9px; align-items: flex-start; line-height: 1.45; }
+.intro-points i { color: var(--brand-2); margin-top: 4px; font-size: .76rem; flex: 0 0 auto; }
+@media (max-width: 575.98px) { .intro-points { grid-template-columns: 1fr; } }
+
+/* ---- awards
+   A white band between the offers and the reviews, with the logo yellow
+   doing the gilding. The feature is the felicitation graphic, shown whole;
+   the four photographs sit in matching 3:4 frames and open full size in the
+   viewer main.js builds. */
+.awards-sec { overflow: hidden; isolation: isolate; background: var(--surface); }
+.awards-sec::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(38% 55% at 20% 32%, rgba(255,194,14,.12), transparent 70%),
+    radial-gradient(45% 50% at 88% 100%, rgba(255,194,14,.07), transparent 70%);
+}
+/* the same yellow hairline that opens the why-choose-us band */
+.awards-sec::after {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--brand) 22%, var(--brand) 78%, transparent);
+}
+
+/* a gilt mount: yellow graded towards the logo's darker gold */
+.award-feature {
+  position: relative; display: block; padding: 7px; border-radius: 20px;
+  background: linear-gradient(145deg, var(--brand-3), var(--brand) 35%, var(--brand-2) 65%, #9A7000);
+  box-shadow: 0 20px 44px rgba(13,13,13,.18);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.award-feature img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 14px; }
+a.award-feature:hover, a.award-feature:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 26px 56px rgba(13,13,13,.22), 0 0 0 6px var(--brand-soft);
+}
+
+/* the mount stays put and the photos slide inside it, so the rounding moves
+   from each picture to the track (translateZ keeps Safari clipping it) */
+.award-slider .owl-stage-outer { border-radius: 14px; transform: translateZ(0); }
+.award-feature .award-slider img { border-radius: 0; }
+/* no Owl: show the felicitation alone rather than nothing */
+.award-slider:not(.owl-loaded) { display: block; }
+.award-slider:not(.owl-loaded) > img:not(:first-child) { display: none; }
+
+.award-dots { display: flex; justify-content: center; gap: 8px; margin-top: 18px; }
+.award-dots.disabled { display: none; }
+.award-dots .owl-dot {
+  width: 10px; height: 10px; padding: 0; border: 0; border-radius: 99px;
+  background: var(--border-2); cursor: pointer;
+  transition: width .3s ease, background-color .3s ease;
+}
+.award-dots .owl-dot:hover { background: var(--brand-2); }
+.award-dots .owl-dot.active { width: 28px; background: var(--brand); }
+.award-dots .owl-dot span { display: none; }
+
+/* the list row for the award on screen lights up with its photo */
+.award-list li.is-on { border-color: var(--brand); background: #FFFDF5; box-shadow: var(--sh-2); }
+.award-list li.is-on .award-yr { box-shadow: 0 0 0 5px var(--brand-soft), 0 0 0 7px var(--brand); }
+
+.award-list { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 12px; }
+.award-list li {
+  display: flex; align-items: center; gap: 16px;
+  padding: 13px 18px 13px 13px; border-radius: 14px;
+  background: var(--surface); border: 1px solid var(--border); box-shadow: var(--sh-1);
+  transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+.award-list li:hover { border-color: var(--brand); background: #FFFDF5; box-shadow: var(--sh-2); }
+/* the rounded square from the why-choose-us tiles, carrying the year */
+.award-yr {
+  width: 58px; height: 58px; flex: 0 0 auto; border-radius: 16px;
+  background: var(--brand); color: var(--ink);
+  display: grid; place-items: center; align-content: center; gap: 4px;
+  font-family: var(--head); font-weight: 800; font-size: .8rem; line-height: 1;
+  box-shadow: 0 0 0 5px var(--brand-soft);
+}
+.award-yr i { font-size: .95rem; }
+.award-list b { display: block; font-family: var(--head); font-weight: 700; font-size: .98rem; line-height: 1.3; color: var(--ink); }
+.award-list span:not(.award-yr) { display: block; margin-top: 4px; font-size: .8rem; line-height: 1.45; color: var(--muted); }
+
+.award-grid { margin-top: clamp(28px, 4vw, 48px); }
+.award-card {
+  display: flex; flex-direction: column; height: 100%; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+  box-shadow: var(--sh-1); color: inherit; text-decoration: none;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+.award-card:hover, .award-card:focus-visible {
+  transform: translateY(-5px); border-color: var(--brand-2);
+  box-shadow: var(--sh-3); color: inherit;
+}
+.award-shot { position: relative; display: block; aspect-ratio: 3 / 4; overflow: hidden; background: #EFECE4; }
+/* the two tall trophy shots lose their floor, not the crown */
+.award-shot img {
+  display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%;
+  transition: transform .4s cubic-bezier(.2,.8,.3,1);
+}
+.award-card:hover .award-shot img { transform: scale(1.045); }
+.award-zoom {
+  position: absolute; top: 12px; right: 12px; z-index: 2;
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--brand); color: var(--ink);
+  display: grid; place-items: center; font-size: .82rem;
+  box-shadow: 0 5px 16px rgba(0,0,0,.3);
+  opacity: 0; transform: translateY(-4px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+.award-feature .award-zoom { top: 20px; right: 20px; }
+.award-card:hover .award-zoom, .award-card:focus-visible .award-zoom,
+.award-feature:hover .award-zoom, .award-feature:focus-visible .award-zoom { opacity: 1; transform: none; }
+/* no hover on a phone, so the hint just stays */
+@media (hover: none) { .award-zoom { opacity: 1; transform: none; } }
+
+.award-cap { display: block; flex: 1 1 auto; padding: 14px 16px 16px; border-top: 3px solid var(--brand); }
+.award-cap small {
+  display: block; margin-bottom: 6px;
+  font-family: var(--head); font-size: .64rem; font-weight: 700;
+  letter-spacing: .13em; text-transform: uppercase; color: var(--brand-ink);
+}
+.award-cap b { display: block; font-family: var(--head); font-weight: 700; font-size: .95rem; line-height: 1.3; color: var(--ink); }
+.award-cap span { display: block; margin-top: 4px; font-size: .78rem; line-height: 1.45; color: var(--muted); }
+@media (max-width: 575.98px) {
+  .award-list li { gap: 12px; padding: 11px 13px 11px 11px; }
+  .award-yr { width: 50px; height: 50px; border-radius: 14px; font-size: .74rem; }
+  .award-list b { font-size: .9rem; }
+  .award-cap { padding: 11px 12px 13px; }
+  .award-cap small { font-size: .58rem; letter-spacing: .1em; }
+  .award-cap b { font-size: .84rem; }
+  .award-cap span { font-size: .72rem; }
+}
+
+/* full-size viewer: a <dialog>, so focus, Esc and the top layer come free */
+.award-lb {
+  width: min(92vw, 900px); max-width: none; max-height: none;
+  padding: 0; border: 0; background: transparent; overflow: visible; color: #fff;
+}
+.award-lb::backdrop { background: rgba(8,8,8,.88); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+body:has(.award-lb[open]) { overflow: hidden; }
+.award-lb-fig { margin: 0; text-align: center; }
+.award-lb-fig img {
+  display: block; margin: 0 auto; width: auto; height: auto;
+  max-width: 100%; max-height: calc(100vh - 120px);
+  border: 3px solid var(--brand); border-radius: var(--r); background: #111;
+  box-shadow: 0 30px 80px rgba(0,0,0,.6);
+}
+.award-lb-fig figcaption { max-width: 60ch; margin: 14px auto 0; font-size: .9rem; line-height: 1.5; color: rgba(255,255,255,.88); }
+.award-lb-btn {
+  position: fixed; width: 46px; height: 46px; border: 0; border-radius: 50%;
+  background: var(--brand); color: var(--ink);
+  display: grid; place-items: center; font-size: 1.05rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,.45);
+  transition: background-color .18s ease, transform .18s ease;
+}
+.award-lb-btn:hover { background: var(--brand-2); transform: scale(1.06); }
+.award-lb :focus-visible { outline-color: var(--brand); }
+.award-lb-x { top: 18px; right: 18px; }
+.award-lb-prev, .award-lb-next { top: 50%; margin-top: -23px; }
+.award-lb-prev { left: 18px; }
+.award-lb-next { right: 18px; }
+@media (max-width: 575.98px) {
+  .award-lb-btn { width: 40px; height: 40px; font-size: .95rem; }
+  .award-lb-x { top: 12px; right: 12px; }
+  .award-lb-prev, .award-lb-next { top: auto; bottom: 16px; margin-top: 0; }
+  .award-lb-prev { left: calc(50% - 50px); }
+  .award-lb-next { right: calc(50% - 50px); }
+  .award-lb-fig img { max-height: calc(100vh - 230px); }
+}
+
+/* ---- google rating summary above the reviews */
+/* ---- platform rating badges (Google / Tripadvisor) */
+.revscore { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+.rev-badge {
+  display: inline-flex; align-items: center; gap: 14px; text-align: left;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 12px 22px 12px 13px; box-shadow: var(--sh-1);
+  text-decoration: none; color: inherit;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+a.rev-badge:hover, a.rev-badge:focus-visible {
+  transform: translateY(-2px); border-color: var(--brand); box-shadow: var(--sh-2);
+  text-decoration: none; color: inherit;
+}
+.rev-logo {
+  width: 46px; height: 46px; flex: 0 0 auto; border-radius: 12px;
+  border: 1.5px solid var(--border-2); background: #fff;
+  display: grid; place-items: center;
+}
+.rev-logo svg { width: 24px; height: 24px; }
+/* the owl mark is wider than it is tall, so it gets its own box */
+.rev-logo .ta-owl { width: 29px; height: 20px; }
+.rev-line { display: flex; align-items: center; gap: 9px; }
+.rev-line b { font-family: var(--head); font-weight: 800; font-size: 1.58rem; line-height: 1; color: var(--ink); letter-spacing: -.02em; }
+.rev-stars { color: var(--brand-2); font-size: .82rem; letter-spacing: 1px; white-space: nowrap; }
+.rev-src {
+  display: block; margin-top: 5px; font-size: .68rem; font-weight: 700;
+  letter-spacing: .13em; text-transform: uppercase; color: var(--muted);
+}
+.gmeta { font-size: .82rem; color: var(--muted); }
+
+/* ---- video reviews: a YouTube facade, poster frame until it is clicked */
+.vidrev { margin-top: 40px; }
+.vidrev-head {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 14px; margin-bottom: 22px;
+}
+.vidrev-head h3 { font-size: 1.28rem; }
+.vidrev-head .fa-youtube { color: #FF0000; }
+
+/* named vrcard, not vcard â€” .vcard is already the fleet vehicle card above */
+.vrcard { height: 100%; }
+
+/* in the carousel: room above the track for the 3px hover lift, and the
+   arrows on the middle of a 16:9 poster (74-99px down across the breakpoints) */
+.vid-carousel .owl-stage-outer { padding-top: 4px; margin-top: -4px; }
+.vid-carousel .owl-nav button.owl-prev,
+.vid-carousel .owl-nav button.owl-next { top: 88px; }
+
+/* the box that holds either the poster link or, once clicked, the player.
+   The gradient is its floor, so the card keeps its shape even before the
+   poster frame has loaded */
+.vframe {
+  position: relative; overflow: hidden; aspect-ratio: 16 / 9;
+  border-radius: var(--r-lg); border: 1px solid var(--border); box-shadow: var(--sh-1);
+  background: linear-gradient(140deg, var(--navy-2), var(--ink));
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.vframe:hover, .vframe:focus-within { transform: translateY(-3px); box-shadow: var(--sh-3); border-color: var(--brand); }
+
+.vthumb { position: absolute; inset: 0; display: block; text-decoration: none; cursor: pointer; }
+.vthumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .45s ease; }
+.vthumb::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.06) 45%, rgba(0,0,0,.45));
+  transition: opacity .2s ease;
+}
+.vframe:hover .vthumb img, .vframe:focus-within .vthumb img { transform: scale(1.06); }
+.vframe:hover .vthumb::after, .vframe:focus-within .vthumb::after { opacity: .55; }
+
+.vplay {
+  position: absolute; z-index: 2; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--brand); color: var(--ink); box-shadow: 0 6px 18px rgba(0,0,0,.34);
+  transition: transform .2s ease;
+}
+.vplay i { font-size: .92rem; margin-left: 3px; }
+.vframe:hover .vplay, .vframe:focus-within .vplay { transform: translate(-50%, -50%) scale(1.12); }
+.vyt {
+  position: absolute; z-index: 2; right: 11px; top: 9px; color: #FF0000;
+  font-size: 1.12rem; line-height: 1; filter: drop-shadow(0 1px 3px rgba(0,0,0,.45));
+}
+
+/* playing â€” the player takes the box over and the poster steps aside */
+.vframe.is-live { transform: none; box-shadow: var(--sh-2); border-color: var(--border); }
+.vframe.is-live .vthumb { display: none; }
+.vframe iframe, .vframe video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.vframe video { object-fit: contain; background: #000; }
+
+.vmeta { padding: 13px 2px 0; }
+.vmeta b { display: block; font-family: var(--head); font-weight: 800; font-size: .92rem; color: var(--ink); line-height: 1.32; }
+.vmeta span { display: block; margin-top: 3px; font-size: .79rem; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .vframe, .vthumb img, .vplay { transition: none; }
+  .vframe:hover, .vframe:focus-within { transform: none; }
+  .vframe:hover .vthumb img, .vframe:focus-within .vthumb img { transform: none; }
+}
+
+/* ------------------------------------------------ tour package cards
+   Photo with a type badge and a duration badge, the itinerary as three
+   short legs, the price, what the fare covers, then the two actions. */
+.pkg {
+  height: 100%; display: flex; flex-direction: column; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+  box-shadow: var(--sh-1);
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+.pkg:hover { transform: translateY(-4px); box-shadow: var(--sh-3); border-color: var(--border-2); }
+
+.pkg-media {
+  position: relative; aspect-ratio: 16 / 10; overflow: hidden;
+  background: linear-gradient(140deg, var(--navy-2), var(--ink));
+}
+.pkg-media img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .5s cubic-bezier(.2,.8,.3,1);
+}
+.pkg:hover .pkg-media img { transform: scale(1.06); }
+.pkg-type, .pkg-days {
+  position: absolute; top: 12px; z-index: 2;
+  font-size: .72rem; font-weight: 800; line-height: 1;
+  padding: 8px 14px; border-radius: 999px; white-space: nowrap;
+}
+.pkg-type { left: 12px; background: rgba(13,13,13,.86); color: #fff; }
+.pkg-days { right: 12px; background: var(--brand); color: var(--ink); }
+
+.pkg-body { flex: 1 1 auto; display: flex; flex-direction: column; padding: 20px; }
+.pkg-body h3 { font-size: 1.12rem; margin-bottom: 14px; }
+
+.pkg-legs { list-style: none; padding: 0; margin: 0 0 16px; }
+.pkg-legs li {
+  position: relative; padding-left: 18px; margin-bottom: 8px;
+  font-size: .89rem; color: var(--body-ink); line-height: 1.45;
+}
+.pkg-legs li::before {
+  content: ""; position: absolute; left: 0; top: .52em;
+  width: 7px; height: 7px; border-radius: 50%; background: var(--brand);
+}
+
+.pkg-price { font-size: .92rem; color: var(--muted); margin-bottom: 0; }
+.pkg-price b {
+  font-family: var(--head); font-weight: 800; font-size: 1.34rem;
+  color: var(--ink); letter-spacing: -.02em;
+}
+.pkg-incl {
+  display: flex; gap: 9px; align-items: flex-start;
+  margin: 14px 0 16px; padding-top: 14px; border-top: 1px dashed var(--border-2);
+  font-size: .84rem; color: var(--muted); line-height: 1.5;
+}
+.pkg-incl i { color: var(--green); font-size: .88rem; margin-top: 3px; flex: 0 0 auto; }
+
+.pkg-foot { margin-top: auto; display: flex; gap: 10px; }
+.pkg-foot .btn { flex: 1 1 0; justify-content: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pkg, .pkg-media img { transition: none; }
+  .pkg:hover { transform: none; }
+  .pkg:hover .pkg-media img { transform: none; }
+}
+
+/* ------------------------------------------------------ booking form
+   A long form reads as a wall unless it is broken up. These numbered
+   headings split it into four short steps inside the one panel. */
+.form-sec { margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--border); }
+.form-sec:first-of-type { margin-top: 0; padding-top: 0; border-top: 0; }
+.form-sec-title { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
+.form-sec-title .n {
+  width: 26px; height: 26px; border-radius: 50%; flex: 0 0 auto;
+  background: var(--brand); color: var(--ink); display: grid; place-items: center;
+  font-family: var(--head); font-weight: 800; font-size: .78rem;
+}
+.form-sec-title h3 { font-size: 1rem; margin: 0; }
+
+/* ------------------------------------------------------ contact page
+   Tiles where the whole box is the link, in the same visual family as the
+   home page's .service-row. */
+.ctile {
+  display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 15px; align-items: center;
+  height: 100%; padding: 20px 18px; text-decoration: none; color: var(--ink);
+  border: 1px solid #DDD8CB; border-radius: 17px; background: rgba(255,255,255,.9);
+  box-shadow: 0 7px 20px rgba(20,20,20,.04);
+  transition: background-color .22s ease, border-color .22s ease, transform .22s ease, box-shadow .22s ease;
+}
+.ctile:hover, .ctile:focus-visible {
+  background: #FFFCF1; border-color: var(--brand); color: var(--ink);
+  transform: translateY(-3px); box-shadow: 0 12px 26px rgba(213,152,0,.20);
+}
+.ctile-ico {
+  width: 48px; height: 48px; border-radius: 13px; background: #F2EEE4; color: var(--brand-ink);
+  display: grid; place-items: center; font-size: 1.05rem;
+  transition: background-color .22s ease, color .22s ease;
+}
+.ctile-ico.is-wa { background: var(--green-soft); color: var(--green); }
+.ctile:hover .ctile-ico { background: var(--ink); color: var(--brand); }
+.ctile-copy { min-width: 0; }
+.ctile-copy small {
+  display: block; font-size: .66rem; font-weight: 800; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 5px;
+}
+.ctile-copy strong {
+  display: block; font-family: var(--head); font-size: .97rem; line-height: 1.3; margin-bottom: 4px;
+}
+/* the address is long enough to overflow a quarter-width tile on its own */
+.ctile-copy strong.is-email { font-size: .8rem; word-break: break-word; }
+.ctile-copy > span { display: block; font-size: .75rem; color: var(--muted); line-height: 1.45; }
+
+/* .card-x is height:100% by default, which made the info card stretch and
+   leave a hole. Here the column drives the heights instead. */
+.contact-aside { display: flex; flex-direction: column; gap: 20px; height: 100%; }
+.contact-info { height: auto; }
+/* the iframe is pinned rather than sized in percentages â€” a percentage height
+   inside a flex item is unreliable, and a collapsed map looks like a blank card */
+.contact-map { position: relative; height: auto; flex: 1 1 auto; padding: 0; overflow: hidden; min-height: 340px; }
+.contact-map iframe { position: absolute; inset: 0; display: block; width: 100%; height: 100%; border: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ctile, .ctile-ico { transition: none; }
+  .ctile:hover, .ctile:focus-visible { transform: none; }
+}
+
+/* ---------------------------------------------------------- roadmap */
+.roadmap { display: none; }
+.step-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; height: 100%; box-shadow: var(--sh-1); }
+.step-card .step-n { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--brand); color: var(--ink); font-family: var(--head); font-weight: 800; font-size: .88rem; margin-bottom: 12px; }
+.step-card h4 { margin-bottom: 6px; }
+.step-card p { font-size: .87rem; color: var(--muted); margin: 0; }
+.bg-ink .step-card, .asphalt .step-card { background: var(--navy-2); border-color: rgba(255,255,255,.09); box-shadow: none; }
+.bg-ink .step-card h4, .asphalt .step-card h4 { color: #fff; }
+.bg-ink .step-card p, .asphalt .step-card p { color: rgba(255,255,255,.62); }
+
+/* ------------------------------------------------ driver vetting cards
+   The four checks a driver clears before he carries a guest. Built as its
+   own card rather than reusing .step-card, whose .step-n is a 32px circle
+   sized for a single digit and cannot hold a longer label. */
+.vet {
+  position: relative; height: 100%; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 26px 22px 24px; box-shadow: var(--sh-1);
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+/* Brand stripe across the top. It spans the full width on purpose: a short
+   bar gets eaten by the left corner radius and reads as a broken tab. */
+.vet::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px;
+  background: var(--brand-3); transition: background .22s ease;
+}
+.vet:hover { transform: translateY(-4px); box-shadow: var(--sh-3); border-color: var(--border-2); }
+.vet:hover::before { background: var(--brand); }
+
+.vet-ico {
+  width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center;
+  background: var(--brand-soft); border: 1px solid var(--amber-soft);
+  color: var(--brand-ink); font-size: 1.1rem; margin-bottom: 16px;
+  transition: background .22s ease, color .22s ease, border-color .22s ease;
+}
+.vet:hover .vet-ico { background: var(--brand); border-color: var(--brand); color: var(--ink); }
+.vet h3 { font-size: 1.04rem; margin-bottom: 8px; }
+.vet p { font-size: .88rem; color: var(--muted); margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vet, .vet::before, .vet-ico { transition: none; }
+  .vet:hover { transform: none; }
+}
+
+/* ------------------------------------------------------------- stats */
+.odo-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 20px 14px; text-align: center; box-shadow: var(--sh-1); height: 100%; }
+.odo { display: block; font-family: var(--head); font-weight: 800; font-size: clamp(1.5rem, 2.8vw, 2.15rem); color: var(--ink); line-height: 1.1; }
+.odo .digit { display: inline; background: none; color: inherit; font: inherit; padding: 0; min-width: 0; border: 0; }
+.odo .digit.sep { color: var(--muted); }
+.odo-lbl { font-size: .78rem; color: var(--muted); margin-top: 5px; font-weight: 600; }
+.stat-block { text-align: center; padding: 16px 8px; }
+.stat-block .stat-n { font-family: var(--head); font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 800; color: var(--ink); line-height: 1; }
+.stat-block .stat-l { font-size: .78rem; color: var(--muted); margin-top: 6px; font-weight: 600; }
+
+/* ---------------------------------------------------------- reviews */
+.review {
+  position: relative; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  padding: 22px 22px 18px; height: 100%;
+  display: flex; flex-direction: column; box-shadow: var(--sh-1);
+  transition: box-shadow .2s ease, border-color .2s ease;
+}
+.review:hover { box-shadow: var(--sh-2); border-color: var(--border-2); }
+.review::before { display: none; }
+.review-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 13px; }
+.review .stars { color: var(--brand-2); font-size: .86rem; letter-spacing: 2px; }
+.review-src { width: 24px; height: 24px; flex: 0 0 auto; display: grid; place-items: center; }
+.review-src svg { width: 18px; height: 18px; }
+.review-src .ta-owl { width: 23px; height: 16px; }
+.review p { font-size: .9rem; line-height: 1.68; color: var(--body-ink); margin: 0 0 18px; }
+.review-who { display: flex; align-items: center; gap: 11px; border-top: 1px solid var(--border); padding-top: 14px; margin-top: auto; }
+.review-av {
+  width: 42px; height: 42px; border-radius: 50%; flex: 0 0 auto;
+  background: var(--brand-soft); color: var(--brand-ink); border: 1px solid #F0E3BC;
+  display: grid; place-items: center; font-family: var(--head); font-weight: 800; font-size: .85rem;
+}
+.review-who b { display: block; font-size: .88rem; color: var(--ink); }
+.review-who span { font-size: .76rem; color: var(--muted); }
+
+/* -------------------------------------------------------- accordion */
+.accordion-item { border: 1px solid var(--border) !important; border-radius: var(--r) !important; margin-bottom: 10px; overflow: hidden; background: var(--surface); box-shadow: var(--sh-1); }
+.accordion-button { font-family: var(--head); font-weight: 700; font-size: .96rem; color: var(--ink); padding: 16px 18px; background: var(--surface); }
+.accordion-button:not(.collapsed) { background: var(--blue-soft); color: var(--blue); box-shadow: none; }
+.accordion-button:focus { box-shadow: none; }
+.accordion-body { padding: 15px 18px 18px; font-size: .9rem; color: var(--muted); border-top: 1px solid var(--border); }
+
+/* ------------------------------------------------------------ forms */
+.form-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: clamp(20px, 3vw, 34px); box-shadow: var(--sh-2); }
+
+/* ---- stat tiles inside a light panel (the About page's numbers block).
+   The milestone band's yellow numerals live on dark; on white they would
+   not carry, so these read in ink with the tint doing the brand work. */
+.hero-stat {
+  height: 100%; padding: 14px 14px 15px;
+  background: var(--brand-soft); border: 1px solid var(--amber-soft); border-radius: var(--r);
+  /* icon above rather than beside: at this column width a 36px chip and its
+     gap took enough room that "Vehicles owned" and "Trips completed" broke
+     onto a second line while "Years running" did not — stacking gives every
+     label the full tile and keeps them all on one line */
+  display: flex; flex-direction: column; align-items: flex-start; gap: 11px;
+}
+/* solid yellow against the tile's tint, so the icon reads as a mark rather
+   than more background */
+.hs-ico {
+  flex: 0 0 auto; width: 34px; height: 34px; border-radius: 11px;
+  background: var(--brand); color: var(--ink);
+  display: grid; place-items: center; font-size: .85rem;
+}
+.hs-body { min-width: 0; width: 100%; }
+.hero-stat .num {
+  font-family: var(--head); font-weight: 800; line-height: 1; letter-spacing: -.016em;
+  font-size: clamp(1.5rem, 2.3vw, 1.9rem); color: var(--ink);
+}
+.hero-stat .lbl {
+  margin-top: 8px; font-size: .7rem; font-weight: 700; color: var(--brand-ink);
+  letter-spacing: .11em; text-transform: uppercase; line-height: 1.35;
+}
+/* ---- .stat-inline: the chip moves beside the copy (the About page).
+   Opt-in rather than the default, because the same tile also runs in the
+   travel guide's col-lg-4 aside, where the chip would leave the caption
+   about 70px and break every one of them across three lines.
+   Even at col-lg-5 the chip costs 40px, so the numeral and the caption both
+   come down a step and the tracking loosens less — that is what keeps all
+   four captions on one line at container widths from 1200px up. */
+.stat-inline { flex-direction: row; align-items: center; gap: 10px; }
+.stat-inline .hs-ico { width: 30px; height: 30px; border-radius: 10px; font-size: .8rem; }
+.stat-inline .hs-body { width: auto; flex: 1 1 auto; }
+.stat-inline .num { font-size: clamp(1.3rem, 1.9vw, 1.6rem); }
+.stat-inline .lbl { margin-top: 5px; font-size: .655rem; letter-spacing: .07em; }
+.form-label { font-size: .74rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.form-control, .form-select { border: 1px solid var(--border-2); border-radius: var(--r-sm); padding: 11px 13px; font-size: .93rem; font-family: var(--font); background: var(--surface); }
+.form-control:focus, .form-select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+.form-check-input:checked { background-color: var(--blue); border-color: var(--blue); }
+.form-note { font-size: .79rem; color: var(--muted); }
+
+/* ------------------------------------------------- select dropdown (custom)
+   The operating system draws a native <select>'s open list and no stylesheet
+   reaches inside it. initSelects() therefore builds the list out of real
+   markup and hides the original select — which still holds the value, still
+   submits and still fires "change". Everything below styles that stand-in;
+   with JavaScript off none of it exists and the native control shows through.
+   ------------------------------------------------------------------------ */
+.dd { position: relative; flex: 1 1 auto; min-width: 0; }
+/* kept in the form, out of sight and out of the tab order */
+.dd-native {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  border: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+}
+/* the trigger carries .form-select too, so it inherits whichever field style
+   its context already defines — boxed on the forms, bare in the search row */
+.dd-btn {
+  width: 100%; text-align: left; cursor: pointer;
+  display: flex; align-items: center;
+  padding-right: 34px;   /* clear of the caret the .form-select style paints */
+}
+.dd-btn:disabled { opacity: .5; cursor: not-allowed; }
+.dd-val { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.dd-menu {
+  position: fixed; z-index: 1080; padding: 7px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; box-shadow: 0 18px 44px rgba(0,0,0,.17), 0 2px 6px rgba(0,0,0,.05);
+  max-height: 262px; overflow-y: auto; overscroll-behavior: contain;
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity .14s ease, transform .14s ease;
+}
+.dd-menu.is-open { opacity: 1; transform: none; }
+.dd-menu::-webkit-scrollbar { width: 10px; }
+.dd-menu::-webkit-scrollbar-thumb { background: #DDD8CA; border-radius: 8px; border: 3px solid var(--surface); }
+
+.dd-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; text-align: left; border: 0; background: transparent;
+  padding: 10px 12px; border-radius: 9px;
+  font-family: var(--head); font-weight: 600; font-size: .89rem; color: var(--body-ink);
+  cursor: pointer; transition: background-color .12s ease, color .12s ease;
+}
+/* .is-cursor is keyboard/pointer position, .is-on is the chosen value —
+   they are separate so arrowing through a list never looks like a change */
+.dd-opt.is-cursor { background: #F5F3EB; color: var(--ink); }
+.dd-opt.is-on { background: var(--brand-soft); color: var(--ink); font-weight: 700; }
+.dd-opt.is-on::after {
+  content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900;
+  font-size: .66rem; color: var(--brand-2); flex: 0 0 auto;
+}
+
+.seg { display: flex; flex-wrap: wrap; gap: 7px; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label { border: 1px solid var(--border-2); border-radius: 999px; padding: 8px 15px; cursor: pointer; font-size: .84rem; font-weight: 600; background: var(--surface); transition: all .15s ease; }
+.seg input:checked + label { background: var(--blue-soft); border-color: var(--blue); color: var(--blue); }
+.seg input:focus-visible + label { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+/* ------------------------------------------------------- page header */
+.page-head { background: var(--navy); color: #D2D2D2; padding-block: clamp(34px, 4vw, 56px); position: relative; overflow: hidden; border-bottom: 3px solid var(--brand); }
+/* the header floats over this band, so the banner keeps its own padding and
+   adds the header's height on top — otherwise the crumbs sit under the nav */
+.floating-header .page-head { padding-top: calc(var(--float-head) + clamp(34px, 4vw, 56px)); }
+.page-head::before { content: ""; position: absolute; right: -6%; top: -30%; width: 40%; height: 140%; background: var(--navy-2); transform: skewX(-14deg); }
+.page-head::after { display: none; }
+/* .has-bg pages carry only their photograph inline; the tint lives here so
+   all eight banners are tuned from one place. The skewed block is dropped —
+   it would just mask the picture. */
+.page-head.has-bg { background-size: cover; background-position: center; background-repeat: no-repeat; }
+.page-head.has-bg::before { display: none; }
+/* Two layers doing two different jobs, which is what lets the tint come down
+   from the old flat 95%/88%/45%: a short band across the top so the floating
+   header always has something to sit on, and a gentle left-to-right wash for
+   the heading. Everything low and to the right is left almost clear, so the
+   photograph is actually visible. */
+.page-head.has-bg::after {
+  content: ""; display: block; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(8,8,8,.55) 0%, rgba(8,8,8,.12) 34%, rgba(8,8,8,0) 60%),
+    linear-gradient(100deg, rgba(13,13,13,.7) 0%, rgba(13,13,13,.45) 45%, rgba(13,13,13,.12) 100%);
+}
+/* thinner tint, so the copy carries its own halo the way the hero does */
+.page-head h1 {
+  color: #fff; position: relative; z-index: 2; font-size: clamp(1.6rem, 2.6vw, 2.15rem);
+  text-shadow: 0 1px 3px rgba(0,0,0,.8), 0 4px 16px rgba(0,0,0,.5);
+}
+.page-head p {
+  color: rgba(255,255,255,.86); max-width: 62ch; position: relative; z-index: 2;
+  text-shadow: 0 1px 3px rgba(0,0,0,.75);
+}
+.crumbs {
+  font-size: .79rem; color: rgba(255,255,255,.72); position: relative; z-index: 2; margin-bottom: 12px;
+  text-shadow: 0 1px 3px rgba(0,0,0,.75);
+}
+.crumbs a { color: rgba(255,255,255,.85); }
+.crumbs span { padding-inline: 7px; }
+
+/* --------------------------------------------------------- gallery */
+.gal { border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; aspect-ratio: 4/3; display: flex; flex-direction: column; justify-content: flex-end; padding: 15px; color: #fff; box-shadow: var(--sh-1); transition: box-shadow .18s ease, transform .18s ease; }
+.gal:hover { box-shadow: var(--sh-3); transform: translateY(-3px); }
+.gal b { font-family: var(--head); font-size: .98rem; }
+.gal span { font-size: .74rem; opacity: .82; }
+
+/* ------------------------------------------------------------ blog */
+.post { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; height: 100%; display: flex; flex-direction: column; box-shadow: var(--sh-1); transition: box-shadow .18s ease, transform .18s ease; }
+.post:hover { box-shadow: var(--sh-3); transform: translateY(-3px); }
+/* the article's photograph. The gradient underneath holds the card's shape
+   if a picture is ever missing, so the row never collapses. */
+.post-media {
+  position: relative; aspect-ratio: 16 / 9; overflow: hidden;
+  background: linear-gradient(140deg, var(--navy-2), var(--ink));
+}
+.post-media img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .5s cubic-bezier(.2,.8,.3,1);
+}
+.post:hover .post-media img { transform: scale(1.06); }
+@media (prefers-reduced-motion: reduce) {
+  .post-media img { transition: none; }
+  .post:hover .post-media img { transform: none; }
+}
+.post-top { padding: 14px 17px; border-bottom: 1px solid var(--border); background: #FDFCF8; }
+.post-body { padding: 17px; flex: 1 1 auto; display: flex; flex-direction: column; }
+.post-cat { font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: var(--blue-soft); color: var(--blue); padding: 4px 9px; border-radius: 5px; }
+
+/* ----------------------------------------------------- chat widget */
+.headunit { background: transparent; border-radius: 0; padding: 0; box-shadow: none; }
+.headunit::before { display: none; }
+.headunit-bezel { display: none; }
+
+.tripdesk { background: var(--surface); border-radius: var(--r-lg); box-shadow: var(--sh-3); overflow: hidden; display: flex; flex-direction: column; min-height: 420px; border: 1px solid var(--border); }
+.tripdesk-head { background: var(--navy); padding: 13px 16px; display: flex; align-items: center; gap: 11px; }
+.tripdesk-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--brand); color: var(--ink); display: grid; place-items: center; flex: 0 0 auto; font-size: 1rem; }
+.tripdesk-title { font-family: var(--head); font-size: .92rem; font-weight: 700; color: #fff; line-height: 1.15; }
+.tripdesk-status { font-size: .74rem; color: #7FD3A0; display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.dot-live { width: 7px; height: 7px; border-radius: 50%; background: #34D07F; animation: pulse-live 1.6s infinite; }
+
+.tripdesk-body { padding: 15px; flex: 1 1 auto; overflow-y: auto; max-height: 270px; background: #FAF9F4; scrollbar-width: thin; }
+.tripdesk-body::-webkit-scrollbar { width: 5px; }
+.tripdesk-body::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+
+.msg { display: flex; margin-bottom: 10px; animation: msg-in .3s ease both; }
+.msg-bot .bubble { background: var(--surface); border: 1px solid var(--border); border-radius: 4px 14px 14px 14px; color: var(--body-ink); box-shadow: var(--sh-1); }
+.msg-user { justify-content: flex-end; }
+.msg-user .bubble { background: var(--blue); color: #fff; border-radius: 14px 4px 14px 14px; font-weight: 500; }
+.bubble { padding: 10px 13px; max-width: 86%; font-size: .88rem; line-height: 1.46; }
+.msg-user .bubble a { color: #fff; }
+.bubble .b-mono { font-size: .8rem; display: block; margin-top: 6px; color: var(--muted); }
+.msg-user .bubble .b-mono { color: rgba(255,255,255,.8); }
+
+.typing { display: inline-flex; gap: 4px; padding: 4px 2px; }
+.typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: typing-b 1.1s infinite; }
+.typing span:nth-child(2) { animation-delay: .16s; }
+.typing span:nth-child(3) { animation-delay: .32s; }
+
+.tripdesk-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 15px 12px; background: #FAF9F4; }
+.chip { font-size: .81rem; font-weight: 600; background: var(--surface); border: 1px solid var(--blue); color: var(--blue); border-radius: 999px; padding: 6px 13px; cursor: pointer; transition: all .15s ease; animation: msg-in .3s ease both; }
+.chip:hover { background: var(--blue); color: #fff; }
+
+.tripdesk-foot { border-top: 1px solid var(--border); padding: 11px; display: flex; gap: 8px; background: var(--surface); }
+.tripdesk-foot input { flex: 1; border: 1px solid var(--border-2); border-radius: 999px; padding: 10px 15px; font-size: .89rem; font-family: var(--font); min-width: 0; }
+.tripdesk-foot input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+.tripdesk-send { width: 42px; height: 42px; border-radius: 50%; border: 0; background: var(--brand); color: var(--ink); display: grid; place-items: center; flex: 0 0 auto; }
+.tripdesk-send:hover { background: var(--brand-2); }
+
+.chat-fab { position: fixed; right: 18px; bottom: 18px; z-index: 1080; width: 58px; height: 58px; border-radius: 50%; background: var(--brand); border: 0; color: var(--ink); display: grid; place-items: center; font-size: 1.3rem; box-shadow: var(--sh-3); cursor: pointer; transition: transform .18s ease; }
+.chat-fab:hover { transform: scale(1.06); }
+.chat-fab .fab-ping { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--brand); animation: ping 2.4s cubic-bezier(0,0,.2,1) infinite; }
+.chat-fab .fab-badge { position: absolute; top: -3px; right: -3px; background: var(--red); color: #fff; width: 20px; height: 20px; border-radius: 50%; font-size: .66rem; font-weight: 700; display: grid; place-items: center; border: 2px solid var(--surface); }
+.chat-dock { position: fixed; right: 18px; bottom: 88px; z-index: 1080; width: min(372px, calc(100vw - 36px)); display: none; }
+.chat-dock.open { display: block; animation: dock-in .28s ease both; }
+.chat-dock .tripdesk { min-height: 400px; }
+.chat-dock .tripdesk-body { max-height: 232px; }
+
+/* ----------------------------------------------------------- footer */
+.site-footer {
+  position: relative; overflow: hidden;
+  background: #191919; color: #A7A7AA; padding-block: clamp(42px, 5vw, 68px) 0;
+  border-top: 5px solid var(--brand);
+}
+.site-footer::before { display: none; }
+.site-footer h5 { color: #fff; font-family: var(--head); font-size: .9rem; margin-bottom: 17px; font-weight: 800; }
+.site-footer a { color: #A7A7AA; font-size: .86rem; }
+.site-footer a:hover { color: var(--brand); }
+.footer-head {
+  display: flex; align-items: center; justify-content: space-between; gap: clamp(30px, 5vw, 72px);
+  padding-bottom: clamp(32px, 4vw, 48px); border-bottom: 1px solid rgba(255,255,255,.12);
+}
+.footer-brand {
+  flex: 1 1 520px; max-width: 610px;
+  display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center;
+  gap: clamp(18px, 2.4vw, 28px);
+}
+.footer-brand::after { display: none; }
+.footer-head-action {
+  flex: 0 1 470px; min-width: 360px; padding: 20px 22px;
+  border-left: 4px solid var(--brand); background: #171718;
+  display: flex; align-items: center; justify-content: space-between; gap: 22px;
+}
+.footer-head-action > div { min-width: 0; }
+.footer-head-action span {
+  display: block; margin-bottom: 3px; color: var(--brand); font-size: .66rem;
+  font-weight: 800; letter-spacing: .11em; text-transform: uppercase;
+}
+.footer-head-action span i { margin-right: 5px; }
+.footer-head-action strong { display: block; color: #fff; font-family: var(--head); font-size: 1rem; line-height: 1.3; }
+.footer-head-action .btn { flex: 0 0 auto; color: var(--ink); white-space: nowrap; }
+.footer-grid { align-items: start; padding-block: clamp(34px, 4vw, 50px); }
+.site-footer > .container > .row:not(.footer-grid) { padding-bottom: clamp(34px, 4vw, 50px); }
+.footer-column, .footer-nav { padding-top: 0; }
+.foot-links { list-style: none; padding: 0; margin: 0; }
+.foot-links li { margin-bottom: 9px; }
+.foot-logo { height: 52px; width: auto; margin-bottom: 15px; }
+.footer-brand .foot-logo { height: 72px; margin: 0; }
+.footer-about { max-width: 66ch; margin: 0; color: #A7A7AA; font-size: .88rem; line-height: 1.72; }
+.foot-social { display: flex; gap: 8px; margin-top: 21px; }
+.foot-social a {
+  width: 38px; height: 38px; border: 1px solid rgba(255,255,255,.14); border-radius: 4px;
+  background: transparent; display: grid; place-items: center; color: #E3E3E3;
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
+}
+.foot-social a:hover { background: var(--brand); border-color: var(--brand); color: var(--ink); transform: translateY(-3px); }
+.footer-nav { padding-inline: 12px; }
+.footer-nav h5::after, .footer-column h5::after { content: ""; display: block; width: 24px; height: 2px; margin-top: 9px; background: var(--brand); }
+.footer-nav .foot-links li { margin-bottom: 10px; }
+.footer-nav .foot-links a { display: inline-flex; align-items: center; transition: color .18s ease, transform .18s ease; }
+.footer-nav .foot-links a::before { display: none; }
+.footer-nav .foot-links a:hover { transform: translateX(4px); }
+.footer-contact li { display: flex; align-items: flex-start; gap: 12px; margin: 0; padding: 0 0 13px; color: #B8B8BA; font-size: .82rem; line-height: 1.5; }
+.footer-contact li > i { width: 18px; margin-top: 3px; color: var(--brand); text-align: center; flex: 0 0 auto; }
+.footer-contact a { font-size: .82rem; }
+.footer-service { padding-left: clamp(18px, 3vw, 42px); border-left: 1px solid rgba(255,255,255,.1); }
+.foot-bar {
+  border-top: 1px solid rgba(255,255,255,.1); padding-block: 19px;
+  font-size: .76rem; color: #77777C;
+}
+.foot-areas { margin: 0; font-size: .78rem; color: #8F8F93; line-height: 1.9; }
+.foot-areas a { font-size: .82rem; }
+.foot-bar strong { color: #77777C; font-weight: 700; }
+
+/* --------------------------------------------------------- CTA band */
+.cta-band {
+  position: relative;
+  background: #EFEDE5;
+  padding-block: clamp(44px, 5vw, 68px);
+}
+.cta-band::before { display: none; }
+
+@media (max-width: 991.98px) {
+  .footer-head { align-items: flex-start; }
+  .footer-head-action { min-width: 320px; align-items: flex-start; flex-direction: column; }
+  .footer-service { padding-left: 12px; border-left: 0; }
+}
+@media (max-width: 575.98px) {
+  .footer-head { align-items: stretch; flex-direction: column; gap: 28px; }
+  .footer-brand, .footer-head-action { flex: 0 0 auto; width: 100%; max-width: none; }
+  .footer-brand { grid-template-columns: 62px minmax(0, 1fr); gap: 16px; }
+  .footer-brand .foot-logo { width: 62px; height: auto; }
+  .footer-brand .footer-about { font-size: .8rem; line-height: 1.6; }
+  .footer-head-action { min-width: 0; padding: 18px; }
+  .footer-head-action .btn { width: 100%; justify-content: center; }
+  .footer-nav { padding-inline: 12px; }
+  .foot-bar { justify-content: center !important; text-align: center; }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .footer-head { align-items: stretch; flex-direction: column; }
+  .footer-brand, .footer-head-action { flex: 0 0 auto; width: 100%; max-width: none; }
+  .footer-head-action { min-width: 0; }
+}
+
+/* ------------------------------------------------- sticky action bar */
+.actionbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 1075;
+  background: var(--surface); border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 16px rgba(0,0,0,.12);
+  display: none; padding: 9px 12px; gap: 8px;
+}
+.actionbar .btn { flex: 1; justify-content: center; padding: 12px 8px; font-size: .86rem; }
+
+/* ----------------------------------------------------------- legal */
+.legal h2 { font-size: 1.25rem; margin-top: 32px; margin-bottom: 10px; }
+.legal h3 { font-size: 1rem; margin-top: 20px; margin-bottom: 7px; }
+.legal ul { color: var(--muted); }
+.legal li { margin-bottom: 6px; }
+
+/* ----------------------------------------------------------- motion */
+.reveal { opacity: 0; transform: translateY(18px); }
+.reveal.in { opacity: 1; transform: none; transition: opacity .5s ease, transform .5s cubic-bezier(.2,.8,.3,1); }
+.reveal-l { opacity: 0; transform: translateX(-20px); }
+.reveal-l.in { opacity: 1; transform: none; transition: opacity .55s ease, transform .55s cubic-bezier(.2,.8,.3,1); }
+.reveal-r { opacity: 0; transform: translateX(20px); }
+.reveal-r.in { opacity: 1; transform: none; transition: opacity .55s ease, transform .55s cubic-bezier(.2,.8,.3,1); }
+.reveal-z { opacity: 0; transform: scale(.97); }
+.reveal-z.in { opacity: 1; transform: none; transition: opacity .45s ease, transform .45s cubic-bezier(.2,.8,.3,1); }
+/* .reveal.in overwrites the transition of anything it sits on, so tiles that
+   animate on hover restate their own list once they have finished revealing */
+.dtile.in {
+  transition: opacity .5s ease, transform .3s cubic-bezier(.2,.8,.3,1),
+              box-shadow .28s ease, border-color .28s ease, color .24s ease;
+}
+.load-up { opacity: 0; animation: load-up .6s cubic-bezier(.2,.8,.3,1) forwards; }
+.d1 { animation-delay: .04s; } .d2 { animation-delay: .1s; } .d3 { animation-delay: .17s; }
+.d4 { animation-delay: .24s; } .d5 { animation-delay: .31s; } .d6 { animation-delay: .4s; }
+
+.speedo { position: fixed; left: 18px; bottom: 18px; z-index: 1070; width: 46px; height: 46px; opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+.speedo.show { opacity: 1; pointer-events: auto; }
+.speedo button { width: 100%; height: 100%; border-radius: 50%; background: var(--surface); color: var(--navy); border: 1px solid var(--border-2); box-shadow: var(--sh-2); display: grid; place-items: center; font-size: .82rem; }
+.speedo svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); pointer-events: none; }
+.speedo .sp-bg { fill: none; stroke: var(--border); stroke-width: 3; }
+.speedo .sp-arc { fill: none; stroke: var(--brand); stroke-width: 3; stroke-linecap: round; }
+
+/* ------------------------------------------------- social side rail
+   Facebook / Instagram / YouTube pinned to the left edge, vertically
+   centred — clear of the speedo (bottom-left) and the chat fab
+   (bottom-right). The footer already carries the same three links, so below
+   992px, where a fixed rail would crowd the content and fight the mobile
+   action bar, this one steps aside. */
+.social-rail {
+  position: fixed; left: 0; top: 50%; transform: translateY(-50%);
+  z-index: 1060; display: grid; gap: 8px; padding: 10px 9px 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border); border-left: 0;
+  border-radius: 0 var(--r) var(--r) 0;
+  /*box-shadow: 0 10px 28px rgba(0, 0, 0, .28), 0 0 0 3px rgba(255, 194, 14, .35);*/
+}
+/* a yellow spine ties the rail to the brand */
+.social-rail::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px; background: var(--brand);
+}
+/* each icon wears its own network's colour so the rail reads at a glance
+   over a busy hero photo, instead of a column of thin black glyphs */
+.sr-link {
+  position: relative; width: 42px; height: 42px; border-radius: 10px;
+  display: grid; place-items: center;
+  color: #fff; font-size: 1.15rem; text-decoration: none;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .22);
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  animation: sr-pop 6s ease-in-out infinite;
+}
+.sr-link[href*="facebook"] { background: #1877F2; }
+.sr-link[href*="instagram"] {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+}
+.sr-link[href*="youtube"] { background: #FF0000; }
+.sr-link:nth-child(2) { animation-delay: .3s; }
+.sr-link:nth-child(3) { animation-delay: .6s; }
+.sr-link:hover, .sr-link:focus-visible {
+  color: #fff; transform: translateX(3px) scale(1.08);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .32); filter: brightness(1.08);
+  animation: none;
+}
+.sr-link:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+/* a small staggered pop every few seconds pulls the eye to the rail */
+@keyframes sr-pop {
+  0%, 10%, 100% { transform: none; }
+  5% { transform: scale(1.15); }
+}
+@media (prefers-reduced-motion: reduce) { .sr-link { animation: none; } }
+/* the name rides out of the rail on hover, so the resting state stays a
+   quiet column of icons rather than a stack of labels */
+.sr-tip {
+  position: absolute; left: calc(100% + 10px); top: 50%;
+  transform: translate(-6px, -50%);
+  font-family: var(--head); font-size: .68rem; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase; white-space: nowrap;
+  background: var(--ink); color: #fff; padding: 5px 9px;
+  border-radius: var(--r-sm);
+  opacity: 0; pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+}
+.sr-tip::before {
+  content: ""; position: absolute; right: 100%; top: 50%;
+  transform: translateY(-50%);
+  border: 5px solid transparent; border-right-color: var(--ink);
+}
+.sr-link:hover .sr-tip, .sr-link:focus-visible .sr-tip {
+  opacity: 1; transform: translate(0, -50%);
+}
+@media (max-width: 991.98px) { .social-rail { display: none; } }
+
+.float-soft { animation: drift 7s ease-in-out infinite; }
+
+@keyframes load-up { to { opacity: 1; transform: none; } }
+@keyframes msg-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes dock-in { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes pulse-live { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+@keyframes typing-b { 0%, 60%, 100% { transform: translateY(0); opacity: .4; } 30% { transform: translateY(-4px); opacity: 1; } }
+@keyframes ping { 0% { transform: scale(1); opacity: .6; } 80%, 100% { transform: scale(1.4); opacity: 0; } }
+@keyframes drift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes hslide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+/* ------------------------------------------------------- responsive */
+/* xl starts at 1200 but .container is still 1140 until 1400, so this band is
+   the tightest the bar ever gets: nav + buttons + logo want about 1167px of
+   1140. It used to balance by letting flex crush the logo to nothing; now
+   that .navbar-brand refuses to shrink, the 30-odd pixels come out of the
+   padding instead, which is the part nobody misses. */
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+  .nav-link { padding: 9px 7px !important; font-size: .855rem; }
+  .navbar-brand img { height: 38px; }
+  .site-header .btn-sm-x { padding: 8px 9px; font-size: .78rem; }
+}
+
+@media (max-width: 991.98px) {
+  :root { --header-h: 64px; }
+
+  /* a .row.g-5 pulls itself out by 24px a side, but .container only pads 12px,
+     so the row hangs 12px past the screen on each edge. Cap the horizontal
+     gutter â€” the columns are stacked at this width anyway, so only the vertical
+     gutter is still doing any work. */
+  .row.g-5 { --bs-gutter-x: 1.5rem; }
+
+  /* the sideways slide-in parks the element 20px off its own box, and anything
+     still below the fold has never been revealed â€” so that 20px sits there as
+     live page width. Stacked columns have no left or right to come in from, so
+     slide them up instead. */
+  .reveal-l, .reveal-r { transform: translateY(18px); }
+
+  .navbar-brand img { height: 56px; }
+  .swap-btn { display: none; }
+
+  /* The field row wraps into pairs. flex-grow stays on, so a cell left alone
+     on a line stretches to fill it instead of stranding an empty half. */
+  .sb-cell { flex: 1 1 50%; border-bottom: 1px solid var(--border); }
+  .sb-cell--wide { flex-grow: 1; }
+  .sb-go { flex: 1 1 100%; justify-content: flex-end; }
+
+  /* three columns leave the rows too narrow for their two lines of copy here.
+     Back to plain tracks — with two per row the eight cards fill four rows
+     exactly, so there is no short row left to centre. */
+  .service-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .service-row, .service-row:nth-child(3n+1):nth-last-child(2) { grid-column: auto; }
+  .dmosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 172px; }
+  /* the accreditation strip added a row under the copy — without the extra
+     height its chips land on top of the search widget riding up from below */
+  .hero-media { min-height: 660px; }
+  .hero-fixed-layer { padding-top: 76px; }
+}
+@media (max-width: 767.98px) {
+  .actionbar { display: flex; }
+  body { padding-bottom: 66px; }
+  .service-list { grid-template-columns: 1fr; }
+  /* no room outside the container on phones â€” bring the arrows onto the cards */
+  .owl-shell .owl-nav button.owl-prev { left: 4px; }
+  .owl-shell .owl-nav button.owl-next { right: 4px; }
+  .chat-fab { bottom: 78px; }
+  .chat-dock { bottom: 144px; right: 12px; left: 12px; width: auto; }
+  .speedo { display: none; }
+}
+@media (max-width: 575.98px) {
+  .searchbox { border-radius: 18px; }
+  .searchbox-tabs { padding: 4px 8px 0; }
+  /* only two tabs, so on a phone they split the width instead of scrolling */
+  .sbtab { flex: 1 1 0; justify-content: center; padding: 13px 8px 12px; font-size: .8rem; gap: 7px; }
+  .sbtab::after { left: 10px; right: 10px; }
+  .sbtab i { font-size: .9rem; }
+  /* the pick-up / drop / destination pair gets a row to itself down here */
+  .sb-cell--wide { flex-basis: 100%; }
+  .sb-cell { padding: 13px 16px 14px; }
+  .sb-go { padding: 13px 14px; }
+  .sb-go .btn { width: 100%; }
+  .searchbox-foot { padding: 11px 15px 13px; }
+  .service-row { min-height: 116px; padding-block: 18px; border-radius: 15px; }
+
+  /* phones keep two columns â€” .dtile-lg must stay spanned to 2 or the grid
+     grows an implicit third column and overflows the screen. */
+  .dmosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 148px; gap: 10px; }
+  .dtile-lg { grid-column: span 2; grid-row: span 2; }
+  .dtile-wide { grid-column: span 2; }
+  .dtile-body { padding: 12px 12px 11px; }
+  .dtile-body::before { width: 20px; margin-bottom: 8px; }
+  .dtile h3 { font-size: .95rem; }
+  .dtile:not(.dtile-lg):not(.dtile-wide) .dtile-tag { display: none; }
+  .dtile-lg .dtile-body, .dtile-wide .dtile-body { padding: 16px 15px 14px; }
+  .dtile-wide h3 { font-size: 1.16rem; }
+  /* Per km / half day / full day read as one rate card, so the three stay on
+     a single row at 33.3% each rather than folding the last one onto its own
+     line. The padding, gap and type come down instead — that buys back enough
+     width for the longest value ("On request") at 360px. */
+  .slip-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px; padding: 10px 9px;
+  }
+  .slip-grid div span { font-size: .6rem; letter-spacing: .03em; }
+  .slip-grid div b { font-size: .78rem; }
+  .hero-media { min-height: 660px; }
+  .hero-fixed-layer { padding-top: 66px; }
+  /* shrunk so all five chips still hold a single row at 360px and up —
+     wrapping to a second row is what pushed them into the search widget */
+  .hero-assoc { margin-top: 20px; }
+  .assoc-label { font-size: .58rem; letter-spacing: .15em; margin-bottom: 9px; }
+  .assoc-list { gap: 6px; }
+  .assoc-list li { padding: 6px 9px; border-radius: 9px; }
+  .assoc-list img { height: 25px; }
+  .hero-fixed-layer > .container { max-width: 100vw; padding-inline: 12px; }
+  .hero-fixed-copy { width: 100%; padding: 18px 6px; }
+  .hero-fixed-copy .hero-kicker { margin-bottom: 11px; padding: 6px 10px; font-size: .62rem; }
+  .hero-fixed-copy .hslide-title { margin-bottom: 12px; font-size: clamp(1.78rem, 8.4vw, 2.15rem); max-width: 17ch; }
+  /* the size gap has to narrow here or the lead-in drops below readable */
+  .ht-lead { font-size: .48em; margin-bottom: .5em; }
+  .hslide-title em { padding-bottom: .18em; margin-bottom: .1em; }
+  .hero-fixed-copy .hslide-sub { max-width: 42ch; margin-bottom: 17px; font-size: .86rem; line-height: 1.5; }
+  .hero-fixed-copy .hero-cta { flex-wrap: nowrap; }
+  .hero-fixed-copy .hero-cta .btn { flex: 1 1 0; justify-content: center; padding: 11px 10px; font-size: .78rem; }
+  .hero-fixed-copy .hero-points { max-width: 100%; margin-top: 16px; gap: 6px 14px; }
+  .hero-fixed-copy .hero-points li { font-size: .7rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  .reveal, .reveal-l, .reveal-r, .reveal-z, .load-up { opacity: 1 !important; transform: none !important; }
+}
+
+@media print {
+  .site-header, .site-footer, .chat-fab, .chat-dock, .speedo, .actionbar, .social-rail { display: none !important; }
+  body { background: #fff; padding-bottom: 0; }
+}

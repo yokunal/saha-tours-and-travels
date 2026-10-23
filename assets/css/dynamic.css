@@ -1,0 +1,131 @@
+/* ==========================================================================
+   ATTARI CAR SERVICE — dynamic.css
+   Styles for the itinerary (day plan) page and small additions used by the
+   ASP.NET version. Loaded after style.css and uses the same design tokens.
+   ========================================================================== */
+
+/* ------------------------------------------------ itinerary banner slider */
+.itin-hero { position: relative; background: var(--navy); color: #fff; overflow: hidden; border-bottom: 3px solid var(--brand); }
+.itin-hero .itin-slider, .itin-hero .itin-slider .owl-stage-outer, .itin-hero .itin-slider .owl-stage, .itin-hero .itin-slider .owl-item { height: 100%; }
+.itin-slide { position: relative; height: clamp(360px, 52vw, 560px); }
+.itin-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.itin-slide::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,10,.15) 0%, rgba(10,10,10,.25) 40%, rgba(10,10,10,.82) 100%); }
+.itin-static { height: clamp(360px, 52vw, 560px); position: relative; }
+.itin-static img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.itin-static::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,10,.15) 0%, rgba(10,10,10,.25) 40%, rgba(10,10,10,.82) 100%); }
+.itin-slider .owl-dots { position: absolute; right: 22px; bottom: 22px; margin: 0; z-index: 3; }
+.itin-slider .owl-dots .owl-dot span { width: 9px; height: 9px; margin: 3px; background: rgba(255,255,255,.45); }
+.itin-slider .owl-dots .owl-dot.active span { background: var(--brand); width: 24px; border-radius: 6px; }
+.itin-slider .owl-nav { margin: 0; }
+.itin-slider .owl-nav button.owl-prev, .itin-slider .owl-nav button.owl-next {
+  position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.35); display: grid; place-items: center; z-index: 3; margin: 0; font-size: .95rem;
+  transition: background .2s;
+}
+.itin-slider .owl-nav button.owl-prev:hover, .itin-slider .owl-nav button.owl-next:hover { background: var(--brand); color: var(--ink); border-color: var(--brand); }
+.itin-slider .owl-nav button.owl-prev { left: 18px; }
+.itin-slider .owl-nav button.owl-next { right: 18px; }
+.itin-slider .owl-nav button span { display: none; }
+
+.itin-hero-copy { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding-bottom: clamp(26px, 4vw, 46px); pointer-events: none; }
+.itin-hero-copy .container > * { pointer-events: auto; }
+.itin-crumbs { font-size: .82rem; color: rgba(255,255,255,.72); margin-bottom: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+.itin-crumbs a { color: #fff; text-decoration: none; }
+.itin-crumbs a:hover { color: var(--brand); }
+.itin-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.itin-badges span { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .78rem; padding: 6px 12px; border-radius: 999px; background: rgba(13,13,13,.72); color: #fff; border: 1px solid rgba(255,255,255,.18); }
+.itin-badges .is-sun { background: var(--brand); color: var(--ink); border-color: transparent; }
+.itin-hero h1 { color: #fff; font-size: clamp(1.7rem, 4vw, 2.7rem); margin-bottom: 8px; max-width: 18ch; line-height: 1.12; }
+.itin-route { color: #E9E6DD; font-size: 1rem; margin: 0 0 18px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.itin-route i { color: var(--brand); }
+.itin-hero-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.itin-price { font-size: .9rem; color: #D6D2C6; }
+.itin-price b { display: block; font-family: var(--head); font-size: clamp(1.6rem, 3vw, 2.2rem); color: var(--brand); line-height: 1; margin-top: 4px; }
+.itin-hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.itin-hero-btns .btn-ghost { background: rgba(255,255,255,.12); color: #fff; border: 2px solid rgba(255,255,255,.55); }
+.itin-hero-btns .btn-ghost:hover { background: #fff; color: var(--ink); border-color: #fff; }
+
+/* ------------------------------------------------ quick facts */
+.itin-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 30px; }
+.itin-fact { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; display: flex; gap: 12px; align-items: center; }
+.itin-fact i { width: 38px; height: 38px; border-radius: 10px; background: var(--brand-soft); color: var(--brand-ink); display: grid; place-items: center; font-size: .95rem; flex: 0 0 auto; }
+.itin-fact small { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 700; }
+.itin-fact b { display: block; font-size: .94rem; color: var(--ink); }
+
+.itin-block { margin-bottom: 44px; }
+.itin-block h2 { font-size: clamp(1.3rem, 2.2vw, 1.7rem); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+.itin-block h2 i { color: var(--brand-ink); font-size: 1rem; }
+.itin-overview { font-size: 1.02rem; color: var(--body-ink); max-width: 68ch; }
+
+/* ------------------------------------------------ day-wise timeline */
+.dayplan { position: relative; padding-left: 0; list-style: none; margin: 0; }
+.dayplan::before { content: ""; position: absolute; left: 27px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(var(--brand) 0 60%, transparent 0 100%) 0 0/2px 10px repeat-y; opacity: .8; }
+.day { position: relative; padding-left: 74px; margin-bottom: 18px; }
+.day-no { position: absolute; left: 0; top: 0; width: 56px; height: 56px; border-radius: 16px; background: var(--ink); color: var(--brand); display: grid; place-items: center; text-align: center; line-height: 1; box-shadow: 0 0 0 5px var(--bg); font-family: var(--head); }
+.day-no small { display: block; font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: #cfcfcf; margin-bottom: 3px; }
+.day-no b { font-size: 1.25rem; }
+.day-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px 22px; box-shadow: var(--sh-1); display: grid; grid-template-columns: 1fr; gap: 18px; }
+.day-card.has-img { grid-template-columns: 1fr 180px; }
+.day-card h3 { font-size: 1.08rem; margin-bottom: 8px; }
+.day-card p { margin-bottom: 12px; color: var(--body-ink); }
+.day-card p:last-child { margin-bottom: 0; }
+.day-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.day-meta li { display: inline-flex; align-items: center; gap: 7px; font-size: .8rem; font-weight: 600; color: var(--ink); background: var(--bg); border: 1px solid var(--border); border-radius: 999px; padding: 5px 11px; }
+.day-meta li i { color: var(--brand-ink); font-size: .78rem; }
+.day-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.day-tags span { font-size: .76rem; padding: 4px 10px; border-radius: 6px; background: var(--brand-soft); color: var(--brand-ink); font-weight: 600; }
+.day-img { border-radius: 12px; overflow: hidden; align-self: start; }
+.day-img img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+@media (max-width: 575px) {
+  .day { padding-left: 62px; }
+  .day-no { width: 48px; height: 48px; border-radius: 13px; }
+  .day-no b { font-size: 1.1rem; }
+  .dayplan::before { left: 23px; }
+  .day-card { padding: 16px; }
+  .day-card.has-img { grid-template-columns: 1fr; }
+}
+
+/* ------------------------------------------------ inclusions / exclusions */
+.incl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 767px) { .incl-grid { grid-template-columns: 1fr; } }
+.incl-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px 22px; }
+.incl-box h3 { font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.incl-box ul { list-style: none; margin: 0; padding: 0; }
+.incl-box li { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-top: 1px dashed var(--border); font-size: .92rem; color: var(--body-ink); }
+.incl-box li:first-child { border-top: 0; }
+.incl-box li i { margin-top: 4px; flex: 0 0 auto; font-size: .85rem; }
+.incl-yes li i { color: var(--green); }
+.incl-no li i { color: var(--red); }
+
+/* ------------------------------------------------ terms */
+.terms-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+.terms-box summary { list-style: none; cursor: pointer; padding: 18px 22px; font-weight: 700; color: var(--ink); display: flex; justify-content: space-between; align-items: center; font-family: var(--head); }
+.terms-box summary::-webkit-details-marker { display: none; }
+.terms-box summary i { transition: transform .25s; color: var(--brand-ink); }
+.terms-box[open] summary i { transform: rotate(180deg); }
+.terms-box ol { margin: 0; padding: 0 22px 20px 42px; color: var(--body-ink); font-size: .92rem; }
+.terms-box ol li { padding: 5px 0; }
+
+/* ------------------------------------------------ sticky enquiry card */
+.itin-side { position: sticky; top: calc(var(--header-h) + 18px); }
+.quote-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-2); overflow: hidden; }
+.quote-head { background: var(--ink); color: #fff; padding: 18px 22px; display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.quote-head small { display: block; font-size: .78rem; color: #C9C5B9; }
+.quote-head b { font-family: var(--head); font-size: 1.7rem; color: var(--brand); line-height: 1; }
+.quote-head .dur { font-size: .78rem; font-weight: 700; background: var(--brand); color: var(--ink); padding: 6px 11px; border-radius: 999px; white-space: nowrap; }
+.quote-body { padding: 20px 22px; }
+.quote-incl { font-size: .86rem; color: var(--body-ink); display: flex; gap: 8px; align-items: flex-start; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px dashed var(--border); }
+.quote-incl i { color: var(--green); margin-top: 3px; }
+.quote-body .form-label { font-size: .82rem; font-weight: 700; margin-bottom: 4px; }
+.quote-body .form-control, .quote-body .form-select { font-size: .92rem; }
+.quote-alt { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.quote-alt .btn { justify-content: center; }
+.quote-note { font-size: .78rem; color: var(--muted); margin: 12px 0 0; text-align: center; }
+
+/* ------------------------------------------------ empty states / misc */
+.empty-note { background: var(--surface); border: 1px dashed var(--border-2); border-radius: var(--r-lg); padding: 40px 20px; text-align: center; color: var(--muted); }
+.pkg-foot .btn.disabled { pointer-events: none; opacity: .5; }
+.btn.is-busy { opacity: .6; pointer-events: none; }
+.form-error { display: none; margin-top: 12px; padding: 10px 14px; border-radius: 10px; background: #FDECEE; color: #9B1C2C; border: 1px solid #F4C2C8; font-size: .9rem; }
+/* Honeypot bot trap: present in the DOM for scripts that auto-fill every field, invisible and unreachable for real visitors. */
+.hp-field { position: absolute !important; left: -9999px !important; top: -9999px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; opacity: 0 !important; }
