@@ -8,35 +8,35 @@
    ========================================================================== */
 
 :root {
-  /* Brand â€” sampled from assets/img/logo.png */
-  --brand: #FFC20E;        /* logo yellow â€” every primary action */
-  --brand-2: #F0AC00;      /* pressed / hover yellow */
-  --brand-3: #FFDA6B;      /* light yellow, for hairlines on dark */
-  --brand-soft: #FFF6DA;   /* yellow tint background */
-  --brand-ink: #7A5A00;    /* yellow-family text that still passes on white */
+  /* Brand — Luxury Champagne Gold & Regal Himalayan Navy sampled from Saha logo */
+  --brand: #C8A064;        /* luxury champagne gold — every primary action */
+  --brand-2: #B38A4E;      /* pressed / hover deep gold */
+  --brand-3: #DFC696;      /* light champagne gold, for hairlines on dark */
+  --brand-soft: #FAF5EC;   /* warm alabaster gold tint background */
+  --brand-ink: #755523;    /* rich gold-family text with high contrast on white */
 
-  /* Interface â€” the logo's black, no blues anywhere */
-  --navy: #101010;         /* dark bars: topbar, hero, footer (name kept) */
-  --navy-2: #1D1D1D;
-  --ink: #0D0D0D;
-  --body-ink: #4B4B4B;
-  --muted: #7C7C7C;
+  /* Interface — deep regal navy and midnight slate from the logo */
+  --navy: #0E2535;         /* dark bars: topbar, hero, footer */
+  --navy-2: #143C50;       /* cards on dark, secondary deep surfaces */
+  --ink: #0B1C28;          /* deep midnight text */
+  --body-ink: #334155;     /* refined slate body text */
+  --muted: #64748B;        /* clean slate secondary text */
 
-  --blue: #141414;         /* accent ink â€” was blue, now logo black */
-  --blue-soft: #FFF4D2;    /* accent tint â€” was pale blue, now yellow */
-  --green: #12A150;        /* WhatsApp + verified ticks only */
-  --green-soft: #E6F6EC;
-  --red: #DC3545;
-  --amber-soft: #FFF3C9;
+  --blue: #143C50;         /* accent ink — deep royal teal-navy */
+  --blue-soft: #EBF3F7;    /* subtle oceanic tint */
+  --green: #10B981;        /* WhatsApp + verified ticks (emerald) */
+  --green-soft: #ECFDF5;
+  --red: #EF4444;
+  --amber-soft: #FEF3C7;
 
-  --bg: #F5F4F0;           /* warm grey app canvas */
+  --bg: #F8FAFC;           /* clean alpine porcelain canvas */
   --surface: #FFFFFF;
-  --border: #E7E4DC;
-  --border-2: #D4D0C6;
+  --border: #E2E8F0;
+  --border-2: #CBD5E1;
 
   /* aliases used by inline styles inside the pages */
-  --sun: #FFC20E;
-  --tar: #0D0D0D;
+  --sun: #C8A064;
+  --tar: #0B1C28;
 
   /* Two faces, deliberately unalike so a heading never reads as bold body text.
      Archivo is an industrial grotesque â€” flat terminals, squared bowls, heavy
@@ -452,9 +452,10 @@ img { max-width: 100%; height: auto; }
 /* wide-tracked caps, the way "S E R V I C E" sits under the logo mark */
 .hero-kicker {
   display: inline-flex; align-items: center; gap: 8px;
-  background: rgb(81, 81, 81, 0.2);
-    color: #ffc723;
-    border: 1px solid #ffc20e;
+  background: rgba(14, 37, 53, 0.65);
+  color: var(--brand);
+  border: 1px solid rgba(200, 160, 100, 0.45);
+  backdrop-filter: blur(8px);
   font-family: var(--head); font-weight: 700; font-size: .73rem;
   letter-spacing: .13em; text-transform: uppercase;
   padding: 7px 15px 7px 14px; border-radius: 999px; margin-bottom: 16px;

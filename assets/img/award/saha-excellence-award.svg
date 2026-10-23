@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 750" width="600" height="750" fill="none">
   <defs>
     <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFE259"/>
-      <stop offset="100%" stop-color="#FFA751"/>
+      <stop offset="0%" stop-color="#E5C07B"/>
+      <stop offset="100%" stop-color="#B38A4E"/>
     </linearGradient>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1E1E24"/>
-      <stop offset="100%" stop-color="#0F0F12"/>
+      <stop offset="0%" stop-color="#143C50"/>
+      <stop offset="100%" stop-color="#0E2535"/>
     </linearGradient>
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="8" result="blur"/>
@@ -16,20 +16,20 @@
 
   <!-- Certificate / Plaque Background -->
   <rect x="15" y="15" width="570" height="720" rx="24" fill="url(#bgGrad)" stroke="url(#goldGrad)" stroke-width="4"/>
-  <rect x="27" y="27" width="546" height="696" rx="18" fill="none" stroke="#FFC20E" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <rect x="27" y="27" width="546" height="696" rx="18" fill="none" stroke="#C8A064" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="6 4"/>
 
   <!-- Top Ribbon / Trophy Icon -->
   <g transform="translate(300, 140)">
     <!-- Laurel Wreath -->
     <path d="M-60 10 C-75 -25 -50 -70 0 -85 C50 -70 75 -25 60 10" fill="none" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round"/>
-    <circle cx="0" cy="-35" r="38" fill="#FFC20E" fill-opacity="0.12" stroke="url(#goldGrad)" stroke-width="2"/>
+    <circle cx="0" cy="-35" r="38" fill="#C8A064" fill-opacity="0.12" stroke="url(#goldGrad)" stroke-width="2"/>
     <!-- Trophy -->
     <path d="M-18 -50 L18 -50 L14 -32 C12 -22 0 -18 0 -18 C0 -18 -12 -22 -14 -32 Z" fill="url(#goldGrad)"/>
     <path d="M-2 -18 L2 -18 L4 -5 L14 0 L-14 0 L-4 -5 Z" fill="url(#goldGrad)"/>
     <path d="M-18 -45 C-26 -45 -28 -35 -20 -30 L-16 -32" stroke="url(#goldGrad)" stroke-width="2" fill="none"/>
     <path d="M18 -45 C26 -45 28 -35 20 -30 L16 -32" stroke="url(#goldGrad)" stroke-width="2" fill="none"/>
     <!-- Stars -->
-    <text x="0" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" fill="#FFC20E" text-anchor="middle" letter-spacing="4">&#9733; &#9733; &#9733; &#9733; &#9733;</text>
+    <text x="0" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" fill="#C8A064" text-anchor="middle" letter-spacing="4">&#9733; &#9733; &#9733; &#9733; &#9733;</text>
   </g>
 
   <!-- Typography -->
@@ -45,9 +45,9 @@
   <text x="300" y="390" font-family="'Archivo', 'Segoe UI', sans-serif" font-size="32" font-weight="900" fill="url(#goldGrad)" letter-spacing="1" text-anchor="middle">SAHA TOURS &amp; TRAVELS</text>
 
   <!-- Award Category -->
-  <rect x="80" y="435" width="440" height="90" rx="14" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFC20E" stroke-opacity="0.4" stroke-width="1.5"/>
+  <rect x="80" y="435" width="440" height="90" rx="14" fill="#FFFFFF" fill-opacity="0.05" stroke="#C8A064" stroke-opacity="0.4" stroke-width="1.5"/>
   <text x="300" y="472" font-family="'Archivo', 'Segoe UI', sans-serif" font-size="18" font-weight="800" fill="#FFFFFF" text-anchor="middle">BEST CAB &amp; TOUR OPERATOR</text>
-  <text x="300" y="502" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="14" font-weight="600" fill="#FFC20E" text-anchor="middle">EXCELLENCE IN HILL TRANSPORTATION</text>
+  <text x="300" y="502" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="14" font-weight="600" fill="#C8A064" text-anchor="middle">EXCELLENCE IN HILL TRANSPORTATION</text>
 
   <!-- Regions & Year -->
   <text x="300" y="575" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="14.5" font-weight="600" fill="#D4D4D8" text-anchor="middle" letter-spacing="1.5">SILIGURI &middot; SIKKIM &middot; DARJEELING &middot; BHUTAN</text>
@@ -55,8 +55,8 @@
   <g transform="translate(300, 645)">
     <!-- Stamp / Seal -->
     <circle cx="0" cy="0" r="38" fill="none" stroke="url(#goldGrad)" stroke-width="2.5" stroke-dasharray="4 3"/>
-    <circle cx="0" cy="0" r="32" fill="#FFC20E" fill-opacity="0.1"/>
-    <text x="0" y="-4" font-family="'Archivo', sans-serif" font-size="11" font-weight="900" fill="#FFC20E" text-anchor="middle" letter-spacing="1">VERIFIED</text>
+    <circle cx="0" cy="0" r="32" fill="#C8A064" fill-opacity="0.1"/>
+    <text x="0" y="-4" font-family="'Archivo', sans-serif" font-size="11" font-weight="900" fill="#C8A064" text-anchor="middle" letter-spacing="1">VERIFIED</text>
     <text x="0" y="12" font-family="'Archivo', sans-serif" font-size="10" font-weight="800" fill="#FFFFFF" text-anchor="middle">2024-2025</text>
   </g>
 </svg>
