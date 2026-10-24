@@ -1247,6 +1247,137 @@
   /* =====================================================================
      boot
      ===================================================================== */
+
+
+  /* =====================================================================
+     3-step theme switcher
+     ===================================================================== */
+  function initThemeSwitcher() {
+    var THEMES = [
+      { id: "classic",  num: "1", label: "Classic White & Gold", short: "1 · White", pipClass: "theme-pip-classic" },
+      { id: "royal",    num: "2", label: "Royal Luxury Light",  short: "2 · Royal", pipClass: "theme-pip-royal" },
+      { id: "midnight", num: "3", label: "Midnight Dark Mode",  short: "3 · Midnight", pipClass: "theme-pip-midnight" }
+    ];
+
+    var currentTheme = "midnight";
+    try {
+      var saved = localStorage.getItem("saha_theme");
+      if (saved && (saved === "classic" || saved === "royal" || saved === "midnight")) {
+        currentTheme = saved;
+      }
+    } catch (e) {}
+
+    document.documentElement.setAttribute("data-theme", currentTheme);
+
+    if (document.getElementById("themeSwitcherDock")) return;
+
+    var dock = document.createElement("aside");
+    dock.id = "themeSwitcherDock";
+    dock.className = "theme-switcher-dock";
+    dock.setAttribute("aria-label", "Website Theme Selector");
+
+    var trackHtml = THEMES.map(function (t) {
+      var isActive = t.id === currentTheme;
+      return (
+        "<button type='button' class='theme-btn " + (isActive ? "active" : "") + "' data-theme-val='" + t.id + "' role='radio' aria-checked='" + isActive + "' title='Step " + t.num + ": " + t.label + "'>" +
+          "<span class='theme-pip " + t.pipClass + "'></span>" +
+          "<span class='step-num'>" + t.num + "</span>" +
+          "<span class='step-title'>" + t.short + "</span>" +
+        "</button>"
+      );
+    }).join("");
+
+    dock.innerHTML =
+      "<div class='theme-switcher-inner'>" +
+        "<div class='theme-switcher-badge'>" +
+          "<i class='fa-solid fa-wand-magic-sparkles' aria-hidden='true'></i>" +
+          "<span>Palette:</span>" +
+        "</div>" +
+        "<div class='theme-switcher-track' role='radiogroup' aria-label='Website color themes'>" +
+          trackHtml +
+        "</div>" +
+        "<button type='button' class='theme-dock-toggle' id='themeDockCollapse' aria-label='Minimize theme toggle' title='Minimize toggle'>" +
+          "<i class='fa-solid fa-chevron-down' aria-hidden='true'></i>" +
+        "</button>" +
+      "</div>" +
+      "<button type='button' class='theme-floating-trigger' id='themeFloatingTrigger' aria-label='Open theme selector' title='Select Theme'>" +
+        "<i class='fa-solid fa-palette' aria-hidden='true'></i>" +
+        "<span>Color Theme</span>" +
+      "</button>" +
+      "<div class='theme-toast' id='themeToast' role='status' aria-live='polite'></div>";
+
+    document.body.appendChild(dock);
+
+    var buttons = dock.querySelectorAll(".theme-btn");
+    var toast = document.getElementById("themeToast");
+    var toastTimeout = null;
+
+    function showToast(msg) {
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add("show");
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(function () {
+        toast.classList.remove("show");
+      }, 2200);
+    }
+
+    function applyTheme(themeId, clicked) {
+      document.documentElement.classList.add("theme-switching");
+      document.documentElement.setAttribute("data-theme", themeId);
+      try {
+        localStorage.setItem("saha_theme", themeId);
+      } catch (e) {}
+
+      buttons.forEach(function (btn) {
+        var active = btn.getAttribute("data-theme-val") === themeId;
+        btn.classList.toggle("active", active);
+        btn.setAttribute("aria-checked", active ? "true" : "false");
+      });
+
+      if (clicked) {
+        var matched = THEMES.find(function (t) { return t.id === themeId; });
+        if (matched) {
+          showToast("Switched to Option " + matched.num + ": " + matched.label);
+        }
+      }
+
+      setTimeout(function () {
+        document.documentElement.classList.remove("theme-switching");
+      }, 300);
+    }
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var val = btn.getAttribute("data-theme-val");
+        applyTheme(val, true);
+      });
+    });
+
+    var collapseBtn = document.getElementById("themeDockCollapse");
+    var triggerBtn = document.getElementById("themeFloatingTrigger");
+
+    if (collapseBtn) {
+      collapseBtn.addEventListener("click", function () {
+        dock.classList.add("is-collapsed");
+        try { localStorage.setItem("saha_theme_collapsed", "true"); } catch (e) {}
+      });
+    }
+
+    if (triggerBtn) {
+      triggerBtn.addEventListener("click", function () {
+        dock.classList.remove("is-collapsed");
+        try { localStorage.removeItem("saha_theme_collapsed"); } catch (e) {}
+      });
+    }
+
+    try {
+      if (localStorage.getItem("saha_theme_collapsed") === "true") {
+        dock.classList.add("is-collapsed");
+      }
+    } catch (e) {}
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initArtwork();
     initHeroVideo();
@@ -1268,5 +1399,6 @@
     initSelects();
     initSearchbox();
     initCallRoll();
+    initThemeSwitcher();
   });
 })();
